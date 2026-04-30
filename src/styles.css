@@ -209,23 +209,6 @@
         oklch(1 0 0 / 0.55) 0%,
         transparent 70%
       ),
-      /* long diagonal streak across the glass */
-      linear-gradient(
-        118deg,
-        transparent 30%,
-        oklch(1 0 0 / 0.08) 42%,
-        oklch(1 0 0 / 0.18) 47%,
-        oklch(1 0 0 / 0.08) 52%,
-        transparent 64%
-      ),
-      /* secondary faint streak */
-      linear-gradient(
-        118deg,
-        transparent 60%,
-        oklch(1 0 0 / 0.06) 68%,
-        oklch(1 0 0 / 0.10) 71%,
-        transparent 78%
-      ),
       /* bottom-right faint reflection */
       radial-gradient(
         ellipse 45% 28% at 82% 88%,
@@ -264,8 +247,8 @@
     );
   }
   @keyframes glass-drift {
-    0%   { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; transform: translateX(0); }
-    100% { background-position: 0% 0%, 0% 0%, 2% 0%, -2% 0%, 0% 0%; transform: translateX(0.4%); }
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(0.4%); }
   }
   @keyframes flicker {
     0%, 100% { opacity: 1; }
