@@ -33,6 +33,8 @@ function Index() {
   const [theme, setTheme] = useState<CrtTheme>(PRESET_THEMES[0]);
   const [glassEnabled, setGlassEnabled] = useState(true);
   const [glassIntensity, setGlassIntensity] = useState(0.35);
+  const [scanlineIntensity, setScanlineIntensity] = useState(0.25);
+  const [flickerSpeed, setFlickerSpeed] = useState(0.5);
 
   async function handleSubmit(url: string) {
     setLoading(true);
@@ -61,6 +63,8 @@ function Index() {
       glassEnabled={glassEnabled}
       glassIntensity={glassIntensity}
       themeLabel={theme.label}
+      scanlineIntensity={scanlineIntensity}
+      flickerSpeed={flickerSpeed}
     >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
@@ -73,6 +77,10 @@ function Index() {
         setGlassEnabled={setGlassEnabled}
         glassIntensity={glassIntensity}
         setGlassIntensity={setGlassIntensity}
+        scanlineIntensity={scanlineIntensity}
+        setScanlineIntensity={setScanlineIntensity}
+        flickerSpeed={flickerSpeed}
+        setFlickerSpeed={setFlickerSpeed}
       />
 
       {loading && <LoadingSequence />}
