@@ -201,31 +201,14 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: -20vh;
-    height: 22vh;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      color-mix(in oklab, var(--phosphor) 25%, transparent) 45%,
-      color-mix(in oklab, var(--phosphor) 55%, transparent) 50%,
-      color-mix(in oklab, var(--phosphor) 25%, transparent) 55%,
-      transparent 100%
-    );
-    filter: blur(1px);
-    animation: scan-roll var(--scan-beam-duration, 6s) linear infinite;
-  }
-  /* Secondary thinner, faster line */
-  .crt-scan-beam::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -5vh;
-    height: 2px;
+    top: -10vh;
+    height: 3px;
     background: color-mix(in oklab, var(--phosphor) 80%, transparent);
-    box-shadow: 0 0 8px var(--phosphor), 0 0 18px color-mix(in oklab, var(--phosphor) 60%, transparent);
-    animation: scan-roll calc(var(--scan-beam-duration, 6s) * 0.55) linear infinite;
-    animation-delay: -1.2s;
+    box-shadow:
+      0 0 6px var(--phosphor),
+      0 0 14px color-mix(in oklab, var(--phosphor) 60%, transparent),
+      0 0 28px color-mix(in oklab, var(--phosphor) 30%, transparent);
+    animation: scan-roll var(--scan-beam-duration, 12s) linear infinite;
   }
   @keyframes scan-roll {
     0%   { transform: translateY(0); }
