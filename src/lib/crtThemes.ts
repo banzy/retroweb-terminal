@@ -57,14 +57,6 @@ export const PRESET_THEMES: CrtTheme[] = [
     dim: "#7a7a6b",
   },
   {
-    id: "hercules",
-    label: "HERCULES",
-    bg: "#000000",
-    phosphor: "#7fff8a",
-    bright: "#c8ffc8",
-    dim: "#2f7a3a",
-  },
-  {
     id: "plasma",
     label: "PLASMA ORANGE",
     bg: "#0a0400",
@@ -75,10 +67,10 @@ export const PRESET_THEMES: CrtTheme[] = [
   {
     id: "macplus",
     label: "MAC PLUS",
-    bg: "#d8d4c8",
-    phosphor: "#1a1a1a",
-    bright: "#000000",
-    dim: "#6a6a60",
+    bg: "#0a0a0a",
+    phosphor: "#e8e8e8",
+    bright: "#ffffff",
+    dim: "#8a8a8a",
   },
 ];
 
