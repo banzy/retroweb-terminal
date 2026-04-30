@@ -315,6 +315,8 @@
   .crt-curve > .crt-curve-inner {
     filter: url(#crt-barrel);
     transform-origin: center center;
+    transform: perspective(1200px) scale(calc(1 - var(--curve-amount, 0.25) * 0.04));
+    border-radius: calc(var(--curve-amount, 0.25) * 24px);
   }
 
   /* Chromatic aberration / RGB split on text */
