@@ -39,7 +39,6 @@ function Index() {
   const [glassEnabled, setGlassEnabled] = useLocalStorageState<boolean>("w1975.glassEnabled", true);
   const [glassIntensity, setGlassIntensity] = useLocalStorageState<number>("w1975.glassIntensity", 0.35);
   const [scanlineIntensity, setScanlineIntensity] = useLocalStorageState<number>("w1975.scanlineIntensity", 0.25);
-  const [flickerSpeed, setFlickerSpeed] = useLocalStorageState<number>("w1975.flickerSpeed", 0.5);
   const [bgTint, setBgTint] = useLocalStorageState<number>("w1975.bgTint", 0);
   const [bgRadial, setBgRadial] = useLocalStorageState<boolean>("w1975.bgRadial", true);
   // Advanced
