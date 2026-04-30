@@ -14,9 +14,13 @@ export function AsciiImage({ src, width = 80 }: Props) {
     setError(null);
     (async () => {
       try {
-        const { dataUrl } = await fetchImageAsDataUrl({ data: { url: src } });
+        const result = await fetchImageAsDataUrl({ data: { url: src } });
         if (cancelled) return;
-        const out = await convertImageToAscii(dataUrl, { width });
+        if (result.error || !result.dataUrl) {
+          setError(result.error || "NO DATA");
+          return;
+        }
+        const out = await convertImageToAscii(result.dataUrl, { width });
         if (cancelled) return;
         setAscii(out);
       } catch (e) {
