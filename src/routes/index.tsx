@@ -11,6 +11,7 @@ import { BootSequence } from "@/components/BootSequence";
 import { fetchWebsiteContent } from "@/server/fetchWebsite.functions";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
+import { FONTS, getFontStack, type FontId } from "@/lib/crtFonts";
 import { useEffect } from "react";
 import { setSoundFlags, playModemHandshake, playErrorBeep } from "@/lib/crtSounds";
 
@@ -56,6 +57,7 @@ function Index() {
   const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "none");
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
   const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", true);
+  const [fontId, setFontId] = useLocalStorageState<FontId>("w1975.fontId", "system");
   const [booting, setBooting] = useState(bootSeq);
   const [rebootKey, setRebootKey] = useState(0);
 
@@ -105,7 +107,7 @@ function Index() {
     <>
     <TerminalShell
       key={rebootKey}
-      style={applyThemeVars(theme)}
+      style={{ ...applyThemeVars(theme), ["--terminal-font" as never]: getFontStack(fontId) }}
       glassEnabled={glassEnabled}
       glassIntensity={glassIntensity}
       themeLabel={theme.label}
@@ -166,6 +168,9 @@ function Index() {
         setSavedThemes={setSavedThemes}
         bootSeq={bootSeq}
         setBootSeq={setBootSeq}
+        fontId={fontId}
+        setFontId={setFontId}
+        fonts={FONTS}
       />
 
       {loading && <LoadingSequence />}
