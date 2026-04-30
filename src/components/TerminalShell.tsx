@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
@@ -17,8 +17,6 @@ type Props = {
   trackingGlitch?: boolean;
   powerAnim?: boolean;
   burnIn?: boolean;
-  densityFlicker?: boolean;
-  cornerHighlight?: boolean;
 };
 
 export function TerminalShell({
@@ -38,8 +36,6 @@ export function TerminalShell({
   trackingGlitch = false,
   powerAnim = false,
   burnIn = false,
-  densityFlicker = false,
-  cornerHighlight = false,
 }: Props) {
   const flickerDuration = flickerSpeed <= 0 ? "10s" : `${(0.4 - flickerSpeed * 0.35).toFixed(3)}s`;
   const flickerDepth = flickerSpeed <= 0 ? 0 : 0.02 + flickerSpeed * 0.08;
@@ -52,17 +48,6 @@ export function TerminalShell({
   // Power-on plays only on first mount when enabled.
   const [powerKey] = useState(() => Date.now());
 
-  // Density-flicker depth proportional to visible text length.
-  const innerRef = useRef<HTMLDivElement | null>(null);
-  const [densityDepth, setDensityDepth] = useState(0.04);
-  useEffect(() => {
-    if (!densityFlicker) return;
-    const el = innerRef.current;
-    if (!el) return;
-    const len = (el.innerText || "").length;
-    setDensityDepth(Math.min(0.12, 0.02 + len / 50000));
-  }, [densityFlicker, children]);
-
   const classes = [
     "crt-screen min-h-screen w-full",
     bgRadial ? "" : "crt-flat",
@@ -71,7 +56,6 @@ export function TerminalShell({
     bloom ? "crt-bloom" : "",
     trackingGlitch ? "crt-tracking-glitch" : "",
     burnIn ? "crt-burnin" : "",
-    densityFlicker ? "crt-density-flicker" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -88,7 +72,6 @@ export function TerminalShell({
         ["--scan-beam-duration" as never]: beamDuration,
         ["--effective-bg" as never]: effectiveBg,
         ["--rgb-split" as never]: `${(rgbSplit * 3).toFixed(2)}px`,
-        ["--density-depth" as never]: densityDepth,
         backgroundColor: effectiveBg,
       }}
     >
@@ -105,7 +88,6 @@ export function TerminalShell({
         </svg>
       )}
       <div
-        ref={innerRef}
         key={powerAnim ? `pwr-${powerKey}` : "static"}
         className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${powerAnim ? "crt-power-on" : ""}`}
       >
@@ -121,7 +103,6 @@ export function TerminalShell({
       </div>
       {glassEnabled && <div className="crt-glass" aria-hidden="true" />}
       {beamEnabled && <div className="crt-scan-beam" aria-hidden="true" />}
-      {cornerHighlight && <div className="crt-corner-highlight" aria-hidden="true" />}
     </div>
   );
 }

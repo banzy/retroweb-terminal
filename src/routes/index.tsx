@@ -46,8 +46,6 @@ function Index() {
   const [trackingGlitch, setTrackingGlitch] = useLocalStorageState<boolean>("w1975.trackingGlitch", false);
   const [powerAnim, setPowerAnim] = useLocalStorageState<boolean>("w1975.powerAnim", false);
   const [burnIn, setBurnIn] = useLocalStorageState<boolean>("w1975.burnIn", false);
-  const [densityFlicker, setDensityFlicker] = useLocalStorageState<boolean>("w1975.densityFlicker", false);
-  const [cornerHighlight, setCornerHighlight] = useLocalStorageState<boolean>("w1975.cornerHighlight", false);
 
   async function handleSubmit(url: string) {
     setLoading(true);
@@ -87,8 +85,6 @@ function Index() {
       trackingGlitch={trackingGlitch}
       powerAnim={powerAnim}
       burnIn={burnIn}
-      densityFlicker={densityFlicker}
-      cornerHighlight={cornerHighlight}
     >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
@@ -123,10 +119,6 @@ function Index() {
         setPowerAnim={setPowerAnim}
         burnIn={burnIn}
         setBurnIn={setBurnIn}
-        densityFlicker={densityFlicker}
-        setDensityFlicker={setDensityFlicker}
-        cornerHighlight={cornerHighlight}
-        setCornerHighlight={setCornerHighlight}
       />
 
       {loading && <LoadingSequence />}
