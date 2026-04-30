@@ -7,6 +7,7 @@ import { LoadingSequence } from "@/components/LoadingSequence";
 import { TerminalOutput } from "@/components/TerminalOutput";
 import { StatusLine } from "@/components/StatusLine";
 import { SettingsPanel } from "@/components/SettingsPanel";
+import { BootSequence } from "@/components/BootSequence";
 import { fetchWebsiteContent } from "@/server/fetchWebsite.functions";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
@@ -55,6 +56,7 @@ function Index() {
   const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", false);
   const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "none");
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
+  const [booting, setBooting] = useState(true);
 
   useEffect(() => {
     setSoundFlags({
