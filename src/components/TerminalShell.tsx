@@ -9,6 +9,7 @@ type Props = {
   scanlineIntensity?: number; // 0..1
   flickerSpeed?: number;      // 0..1 (0 = off, 1 = fastest)
   scanBeamSpeed?: number;     // 0..1 (0 = off, 1 = fastest sweep)
+  bgTint?: number;            // 0..1 (0 = pure black, 1 = theme dim color)
 };
 
 export function TerminalShell({
@@ -20,6 +21,7 @@ export function TerminalShell({
   scanlineIntensity = 0.25,
   flickerSpeed = 0.5,
   scanBeamSpeed = 0.4,
+  bgTint = 0,
 }: Props) {
   // Map flickerSpeed (0..1) to duration + depth.
   // 0 → effectively off (long duration, no depth).
@@ -28,6 +30,10 @@ export function TerminalShell({
   // Map scanBeamSpeed: 0 → off, otherwise 30s (very slow) → 6s (fast)
   const beamEnabled = scanBeamSpeed > 0;
   const beamDuration = beamEnabled ? `${(30 - scanBeamSpeed * 24).toFixed(2)}s` : "0s";
+  // Mix pure black with theme's --phosphor-dim by bgTint%.
+  const effectiveBg = `color-mix(in oklab, var(--phosphor-dim) ${Math.round(
+    bgTint * 100,
+  )}%, #000000)`;
 
   return (
     <div
@@ -39,6 +45,8 @@ export function TerminalShell({
         ["--flicker-duration" as never]: flickerDuration,
         ["--flicker-depth" as never]: flickerDepth,
         ["--scan-beam-duration" as never]: beamDuration,
+        ["--effective-bg" as never]: effectiveBg,
+        backgroundColor: effectiveBg,
       }}
     >
       <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10">

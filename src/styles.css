@@ -157,10 +157,11 @@
 @layer utilities {
   .crt-screen {
     position: relative;
+    /* --bg-tint blends pure black -> theme dim phosphor color */
     background:
       radial-gradient(ellipse at center,
-        color-mix(in oklab, var(--phosphor) 8%, var(--crt-bg)) 0%,
-        var(--crt-bg) 100%);
+        color-mix(in oklab, var(--phosphor) 8%, var(--effective-bg, var(--crt-bg))) 0%,
+        var(--effective-bg, var(--crt-bg)) 100%);
   }
   .crt-screen::before {
     content: "";
