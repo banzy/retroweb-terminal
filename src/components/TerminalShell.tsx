@@ -1,4 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
+import type { CabinetId } from "@/lib/crtThemes";
 
 type Props = {
   children: ReactNode;
@@ -17,6 +18,7 @@ type Props = {
   trackingGlitch?: boolean;
   powerAnim?: boolean;
   burnIn?: boolean;
+  cabinet?: CabinetId;
 };
 
 export function TerminalShell({
@@ -36,6 +38,7 @@ export function TerminalShell({
   trackingGlitch = false,
   powerAnim = false,
   burnIn = false,
+  cabinet = "none",
 }: Props) {
   const flickerDuration = flickerSpeed <= 0 ? "10s" : `${(0.4 - flickerSpeed * 0.35).toFixed(3)}s`;
   const flickerDepth = flickerSpeed <= 0 ? 0 : 0.02 + flickerSpeed * 0.08;
@@ -60,7 +63,7 @@ export function TerminalShell({
     .filter(Boolean)
     .join(" ");
 
-  return (
+  const screen = (
     <div
       className={classes}
       style={{
@@ -102,4 +105,13 @@ export function TerminalShell({
       {beamEnabled && <div className="crt-scan-beam" aria-hidden="true" />}
     </div>
   );
+
+  if (cabinet && cabinet !== "none") {
+    return (
+      <div className={`crt-cabinet crt-cab-${cabinet}`} style={style}>
+        <div className="crt-cabinet-screen">{screen}</div>
+      </div>
+    );
+  }
+  return screen;
 }
