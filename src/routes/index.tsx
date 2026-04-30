@@ -92,6 +92,7 @@ function Index() {
   }
 
   return (
+    <>
     <TerminalShell
       style={applyThemeVars(theme)}
       glassEnabled={glassEnabled}
