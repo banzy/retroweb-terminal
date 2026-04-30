@@ -2,7 +2,7 @@ import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { asciiSeparator, nowStamp, wrapText } from "@/lib/textFormatter1975";
 import { AsciiFrame } from "./AsciiFrame";
 import { AsciiImage } from "./AsciiImage";
-import { ASCII_SATELLITE, ASCII_TV, BANNER_NO_SIGNAL } from "@/lib/asciiBanners";
+import { ASCII_TV, BANNER_NO_SIGNAL } from "@/lib/asciiBanners";
 
 type Props = { data: ParsedWebsite; asciiWidth: number };
 
@@ -17,9 +17,6 @@ export function TerminalOutput({ data, asciiWidth }: Props) {
 
   return (
     <div className="mt-4 space-y-4">
-      <pre className="ascii-pre crt-text text-[var(--phosphor-dim)] text-[10px] sm:text-xs leading-tight">
-{ASCII_SATELLITE}
-      </pre>
       <AsciiFrame lines={headerLines} />
 
       {data.headings.length > 0 && (
