@@ -47,13 +47,16 @@ export function AsciiImage({ src, width = 80 }: Props) {
       </pre>
     );
   }
-  // Font size scales inversely with chosen width so 60 looks chunky and
-  // 120 looks fine — otherwise wider output just overflows horizontally.
-  const fontPx = Math.max(5, Math.min(12, Math.round(720 / width)));
+  // Use a ch-based font size so the rendered <pre> always fills ~the same
+  // container width regardless of `width`. Higher width = smaller chars =
+  // more detail; lower width = chunky pixels. This makes the slider visibly
+  // change the look instead of just overflowing horizontally.
+  // Char aspect ≈ 0.6 (width per ch). Target ~60ch container.
+  const fontPx = Math.max(4, Math.min(20, Math.round(960 / width)));
   return (
     <pre
       className="ascii-pre crt-text text-[var(--phosphor)] leading-[1] overflow-x-auto"
-      style={{ fontSize: `${fontPx}px` }}
+      style={{ fontSize: `${fontPx}px`, lineHeight: 1 }}
     >
       {ascii}
     </pre>
