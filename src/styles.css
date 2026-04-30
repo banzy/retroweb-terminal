@@ -176,6 +176,9 @@
     z-index: 51;
     animation: flicker var(--flicker-duration, 0.15s) infinite;
   }
+  .crt-screen.crt-flat::after {
+    background: none;
+  }
   /* Rolling scan beam — bright horizontal band sweeping top to bottom */
   .crt-scan-beam {
     position: fixed;
