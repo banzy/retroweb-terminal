@@ -186,37 +186,68 @@
     z-index: 51;
     animation: flicker 0.15s infinite;
   }
-  /* Glass reflection overlay - simulates a curved CRT glass surface */
+  /* CRT glass reflection — curved surface with twin highlight bands,
+     a soft drifting glare, and darkened edges. */
   .crt-glass {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 52;
     opacity: var(--glass-intensity, 0.35);
+    mix-blend-mode: screen;
     background:
-      /* top-left highlight sweep */
-      linear-gradient(
-        135deg,
-        oklch(1 0 0 / 0.18) 0%,
-        oklch(1 0 0 / 0.06) 18%,
-        transparent 38%,
-        transparent 62%,
-        oklch(1 0 0 / 0.04) 82%,
-        oklch(1 0 0 / 0.10) 100%
-      ),
-      /* soft glare blob */
+      /* primary curved highlight (top-left) */
       radial-gradient(
-        ellipse 60% 40% at 25% 18%,
-        oklch(1 0 0 / 0.22) 0%,
+        ellipse 70% 55% at 22% 12%,
+        oklch(1 0 0 / 0.35) 0%,
+        oklch(1 0 0 / 0.12) 28%,
+        transparent 60%
+      ),
+      /* secondary tighter glare */
+      radial-gradient(
+        ellipse 18% 10% at 30% 22%,
+        oklch(1 0 0 / 0.55) 0%,
         transparent 70%
+      ),
+      /* long diagonal streak across the glass */
+      linear-gradient(
+        118deg,
+        transparent 30%,
+        oklch(1 0 0 / 0.08) 42%,
+        oklch(1 0 0 / 0.18) 47%,
+        oklch(1 0 0 / 0.08) 52%,
+        transparent 64%
+      ),
+      /* secondary faint streak */
+      linear-gradient(
+        118deg,
+        transparent 60%,
+        oklch(1 0 0 / 0.06) 68%,
+        oklch(1 0 0 / 0.10) 71%,
+        transparent 78%
       ),
       /* bottom-right faint reflection */
       radial-gradient(
-        ellipse 40% 25% at 80% 85%,
-        oklch(1 0 0 / 0.08) 0%,
+        ellipse 45% 28% at 82% 88%,
+        oklch(1 0 0 / 0.10) 0%,
         transparent 70%
       );
-    mix-blend-mode: screen;
+    animation: glass-drift 14s ease-in-out infinite alternate;
+  }
+  /* Vignette + curved edge shading layered on top */
+  .crt-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      /* curved-screen edge darkening (acts like glass thickness) */
+      radial-gradient(
+        ellipse 95% 95% at 50% 50%,
+        transparent 55%,
+        oklch(0 0 0 / 0.35) 88%,
+        oklch(0 0 0 / 0.65) 100%
+      );
+    mix-blend-mode: multiply;
   }
   .crt-glass::after {
     content: "";
@@ -224,11 +255,17 @@
     inset: 0;
     background: linear-gradient(
       to bottom,
-      oklch(1 0 0 / 0.05) 0%,
-      transparent 8%,
-      transparent 92%,
-      oklch(0 0 0 / 0.15) 100%
+      oklch(1 0 0 / 0.10) 0%,
+      oklch(1 0 0 / 0.02) 6%,
+      transparent 14%,
+      transparent 86%,
+      oklch(0 0 0 / 0.10) 94%,
+      oklch(0 0 0 / 0.25) 100%
     );
+  }
+  @keyframes glass-drift {
+    0%   { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; transform: translateX(0); }
+    100% { background-position: 0% 0%, 0% 0%, 2% 0%, -2% 0%, 0% 0%; transform: translateX(0.4%); }
   }
   @keyframes flicker {
     0%, 100% { opacity: 1; }
