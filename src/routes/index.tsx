@@ -139,7 +139,6 @@ function Index() {
       glassIntensity={glassIntensity}
       themeLabel={theme.label}
       scanlineIntensity={scanlineIntensity}
-      flickerSpeed={flickerSpeed}
       bgTint={bgTint}
       bgRadial={bgRadial}
       curvature={curvature}
@@ -164,8 +163,6 @@ function Index() {
         setGlassIntensity={setGlassIntensity}
         scanlineIntensity={scanlineIntensity}
         setScanlineIntensity={setScanlineIntensity}
-        flickerSpeed={flickerSpeed}
-        setFlickerSpeed={setFlickerSpeed}
         bgTint={bgTint}
         setBgTint={setBgTint}
         bgRadial={bgRadial}
