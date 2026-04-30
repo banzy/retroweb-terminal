@@ -14,8 +14,6 @@ type Props = {
   setGlassIntensity: (n: number) => void;
   scanlineIntensity: number;
   setScanlineIntensity: (n: number) => void;
-  flickerSpeed: number;
-  setFlickerSpeed: (n: number) => void;
   bgTint: number;
   setBgTint: (n: number) => void;
   bgRadial: boolean;
@@ -62,8 +60,6 @@ export function SettingsPanel({
   setGlassIntensity,
   scanlineIntensity,
   setScanlineIntensity,
-  flickerSpeed,
-  setFlickerSpeed,
   bgTint,
   setBgTint,
   bgRadial,
@@ -420,20 +416,6 @@ export function SettingsPanel({
             </button>
             {advOpen && (
               <div className="mt-3 space-y-2">
-                <label className="flex items-center gap-2">
-                  <span className="w-40">FLICKER=</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={Math.round(flickerSpeed * 100)}
-                    onChange={(e) => setFlickerSpeed(parseInt(e.target.value, 10) / 100)}
-                    className="flex-1 accent-[var(--phosphor)]"
-                  />
-                  <span className="w-10 text-right text-[var(--phosphor)]">
-                    {flickerSpeed <= 0 ? "OFF" : `${Math.round(flickerSpeed * 100)}%`}
-                  </span>
-                </label>
                 <ToggleRow label="SCREEN_CURVATURE" checked={curvature} onChange={setCurvature} />
                 <label className="flex items-center gap-2">
                   <span className="w-40">RGB_SPLIT=</span>

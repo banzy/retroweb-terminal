@@ -176,7 +176,6 @@
     pointer-events: none;
     background: radial-gradient(ellipse at center, transparent 50%, oklch(0 0 0 / 0.6) 100%);
     z-index: 51;
-    animation: flicker var(--flicker-duration, 0.15s) infinite;
   }
   .crt-screen.crt-flat::after {
     background: none;
@@ -271,10 +270,6 @@
   @keyframes glass-drift {
     0%   { transform: translateX(0); }
     100% { transform: translateX(0.4%); }
-  }
-  @keyframes flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: calc(1 - var(--flicker-depth, 0.03)); }
   }
   .crt-text {
     color: var(--phosphor);

@@ -39,7 +39,6 @@ function Index() {
   const [glassEnabled, setGlassEnabled] = useLocalStorageState<boolean>("w1975.glassEnabled", true);
   const [glassIntensity, setGlassIntensity] = useLocalStorageState<number>("w1975.glassIntensity", 0.35);
   const [scanlineIntensity, setScanlineIntensity] = useLocalStorageState<number>("w1975.scanlineIntensity", 0.25);
-  const [flickerSpeed, setFlickerSpeed] = useLocalStorageState<number>("w1975.flickerSpeed", 0.5);
   const [bgTint, setBgTint] = useLocalStorageState<number>("w1975.bgTint", 0);
   const [bgRadial, setBgRadial] = useLocalStorageState<boolean>("w1975.bgRadial", true);
   // Advanced
@@ -140,7 +139,6 @@ function Index() {
       glassIntensity={glassIntensity}
       themeLabel={theme.label}
       scanlineIntensity={scanlineIntensity}
-      flickerSpeed={flickerSpeed}
       bgTint={bgTint}
       bgRadial={bgRadial}
       curvature={curvature}
@@ -165,8 +163,6 @@ function Index() {
         setGlassIntensity={setGlassIntensity}
         scanlineIntensity={scanlineIntensity}
         setScanlineIntensity={setScanlineIntensity}
-        flickerSpeed={flickerSpeed}
-        setFlickerSpeed={setFlickerSpeed}
         bgTint={bgTint}
         setBgTint={setBgTint}
         bgRadial={bgRadial}

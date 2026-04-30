@@ -8,7 +8,6 @@ type Props = {
   glassIntensity?: number;
   themeLabel?: string;
   scanlineIntensity?: number;
-  flickerSpeed?: number;
   bgTint?: number;
   bgRadial?: boolean;
   curvature?: boolean;
@@ -28,7 +27,6 @@ export function TerminalShell({
   glassIntensity = 0.35,
   themeLabel = "P1 GREEN",
   scanlineIntensity = 0.25,
-  flickerSpeed = 0.5,
   bgTint = 0,
   bgRadial = true,
   curvature = false,
@@ -40,8 +38,6 @@ export function TerminalShell({
   cabinet = "none",
   collapsing = false,
 }: Props) {
-  const flickerDuration = flickerSpeed <= 0 ? "10s" : `${(0.4 - flickerSpeed * 0.35).toFixed(3)}s`;
-  const flickerDepth = flickerSpeed <= 0 ? 0 : 0.02 + flickerSpeed * 0.08;
   const effectiveBg = `color-mix(in oklab, var(--phosphor-dim) ${Math.round(
     bgTint * 100,
   )}%, #000000)`;
@@ -69,8 +65,6 @@ export function TerminalShell({
         ...style,
         ["--glass-intensity" as never]: glassIntensity,
         ["--scanline-alpha" as never]: scanlineIntensity,
-        ["--flicker-duration" as never]: flickerDuration,
-        ["--flicker-depth" as never]: flickerDepth,
         ["--effective-bg" as never]: effectiveBg,
         ["--rgb-split" as never]: `${(rgbSplit * 3).toFixed(2)}px`,
         backgroundColor: effectiveBg,
