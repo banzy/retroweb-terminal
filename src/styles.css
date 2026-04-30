@@ -46,6 +46,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
+  --font-mono: var(--terminal-font, ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  --font-sans: var(--terminal-font, ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -305,7 +307,7 @@
   }
   .ascii-pre {
     white-space: pre;
-    font-family: ui-monospace, "Courier New", monospace;
+    font-family: var(--terminal-font, ui-monospace, "Courier New", monospace);
     line-height: 1;
     letter-spacing: 0;
   }
