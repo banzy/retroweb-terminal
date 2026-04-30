@@ -171,8 +171,8 @@
       to bottom,
       transparent 0px,
       transparent 2px,
-      oklch(0 0 0 / 0.25) 3px,
-      oklch(0 0 0 / 0.25) 3px
+      oklch(0 0 0 / var(--scanline-alpha, 0.25)) 3px,
+      oklch(0 0 0 / var(--scanline-alpha, 0.25)) 3px
     );
     z-index: 50;
     mix-blend-mode: multiply;
@@ -184,7 +184,7 @@
     pointer-events: none;
     background: radial-gradient(ellipse at center, transparent 50%, oklch(0 0 0 / 0.6) 100%);
     z-index: 51;
-    animation: flicker 0.15s infinite;
+    animation: flicker var(--flicker-duration, 0.15s) infinite;
   }
   /* CRT glass reflection — curved surface with twin highlight bands,
      a soft drifting glare, and darkened edges. */
@@ -269,7 +269,7 @@
   }
   @keyframes flicker {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.97; }
+    50% { opacity: calc(1 - var(--flicker-depth, 0.03)); }
   }
   .crt-text {
     text-shadow: var(--text-glow);
