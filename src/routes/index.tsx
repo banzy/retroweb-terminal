@@ -56,7 +56,8 @@ function Index() {
   const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", false);
   const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "none");
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
-  const [booting, setBooting] = useState(true);
+  const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", true);
+  const [booting, setBooting] = useState(bootSeq);
 
   useEffect(() => {
     setSoundFlags({
@@ -156,6 +157,8 @@ function Index() {
         setCabinet={setCabinet}
         savedThemes={savedThemes}
         setSavedThemes={setSavedThemes}
+        bootSeq={bootSeq}
+        setBootSeq={setBootSeq}
       />
 
       {loading && <LoadingSequence />}
@@ -184,13 +187,13 @@ EXAMPLES:
       )}
 
       <StatusLine status={status} />
+      {booting && bootSeq && (
+        <BootSequence
+          delayMs={powerAnim ? 1100 : 0}
+          onDone={() => setBooting(false)}
+        />
+      )}
     </TerminalShell>
-    {booting && (
-      <BootSequence
-        delayMs={powerAnim ? 1100 : 0}
-        onDone={() => setBooting(false)}
-      />
-    )}
     </>
   );
 }
