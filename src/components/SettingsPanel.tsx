@@ -150,6 +150,41 @@ export function SettingsPanel({
             </div>
           </div>
 
+          {/* CRT effect tuning */}
+          <div>
+            <div className="mb-2 text-[var(--phosphor)]">&gt; CRT EFFECTS:</div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2">
+                <span className="w-24">SCANLINES=</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(scanlineIntensity * 100)}
+                  onChange={(e) => setScanlineIntensity(parseInt(e.target.value, 10) / 100)}
+                  className="flex-1 accent-[var(--phosphor)]"
+                />
+                <span className="w-10 text-right text-[var(--phosphor)]">
+                  {Math.round(scanlineIntensity * 100)}%
+                </span>
+              </label>
+              <label className="flex items-center gap-2">
+                <span className="w-24">FLICKER=</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(flickerSpeed * 100)}
+                  onChange={(e) => setFlickerSpeed(parseInt(e.target.value, 10) / 100)}
+                  className="flex-1 accent-[var(--phosphor)]"
+                />
+                <span className="w-10 text-right text-[var(--phosphor)]">
+                  {flickerSpeed <= 0 ? "OFF" : `${Math.round(flickerSpeed * 100)}%`}
+                </span>
+              </label>
+            </div>
+          </div>
+
           {/* Ascii width */}
           <div className="flex items-center gap-2">
             <span className="text-[var(--phosphor)]">&gt; ASCII_WIDTH=</span>
