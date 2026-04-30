@@ -194,7 +194,7 @@
     z-index: 53;
     overflow: hidden;
     mix-blend-mode: screen;
-    opacity: var(--scan-beam-opacity, 0.6);
+    opacity: var(--scan-beam-opacity, 0.18);
   }
   .crt-scan-beam::before {
     content: "";
@@ -202,12 +202,11 @@
     left: 0;
     right: 0;
     top: -10vh;
-    height: 3px;
-    background: color-mix(in oklab, var(--phosphor) 80%, transparent);
+    height: 2px;
+    background: color-mix(in oklab, var(--phosphor) 35%, transparent);
     box-shadow:
-      0 0 6px var(--phosphor),
-      0 0 14px color-mix(in oklab, var(--phosphor) 60%, transparent),
-      0 0 28px color-mix(in oklab, var(--phosphor) 30%, transparent);
+      0 0 4px color-mix(in oklab, var(--phosphor) 30%, transparent),
+      0 0 12px color-mix(in oklab, var(--phosphor) 15%, transparent);
     animation: scan-roll var(--scan-beam-duration, 12s) linear infinite;
   }
   @keyframes scan-roll {
