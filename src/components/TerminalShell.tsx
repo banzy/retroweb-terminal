@@ -25,9 +25,9 @@ export function TerminalShell({
   // 0 → effectively off (long duration, no depth).
   const flickerDuration = flickerSpeed <= 0 ? "10s" : `${(0.4 - flickerSpeed * 0.35).toFixed(3)}s`;
   const flickerDepth = flickerSpeed <= 0 ? 0 : 0.02 + flickerSpeed * 0.08;
-  // Map scanBeamSpeed: 0 → off, otherwise 12s (slow) → 1.5s (fast)
+  // Map scanBeamSpeed: 0 → off, otherwise 30s (very slow) → 6s (fast)
   const beamEnabled = scanBeamSpeed > 0;
-  const beamDuration = beamEnabled ? `${(12 - scanBeamSpeed * 10.5).toFixed(2)}s` : "0s";
+  const beamDuration = beamEnabled ? `${(30 - scanBeamSpeed * 24).toFixed(2)}s` : "0s";
 
   return (
     <div
