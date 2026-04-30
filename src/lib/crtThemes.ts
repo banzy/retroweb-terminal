@@ -90,7 +90,7 @@ export function applyThemeVars(t: CrtTheme): React.CSSProperties {
     ["--phosphor" as never]: t.phosphor,
     ["--phosphor-bright" as never]: t.bright,
     ["--phosphor-dim" as never]: t.dim,
-    ["--text-glow" as never]: `0 0 2px ${t.phosphor}, 0 0 6px ${t.phosphor}80`,
+    ["--text-glow" as never]: `0 0 2px ${t.phosphor}, 0 0 6px color-mix(in srgb, ${t.phosphor} 50%, transparent)`,
     // Buttons that invert (hover) read this for their text color.
     // Always use the theme bg so contrast against the phosphor stays correct.
     ["--primary-foreground" as never]: t.bg,
