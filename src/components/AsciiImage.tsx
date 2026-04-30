@@ -43,8 +43,14 @@ export function AsciiImage({ src, width = 80 }: Props) {
       </pre>
     );
   }
+  // Font size scales inversely with chosen width so 60 looks chunky and
+  // 120 looks fine — otherwise wider output just overflows horizontally.
+  const fontPx = Math.max(5, Math.min(12, Math.round(720 / width)));
   return (
-    <pre className="ascii-pre crt-text text-[var(--phosphor)] text-[8px] sm:text-[10px] leading-[1] overflow-x-auto">
+    <pre
+      className="ascii-pre crt-text text-[var(--phosphor)] leading-[1] overflow-x-auto"
+      style={{ fontSize: `${fontPx}px` }}
+    >
       {ascii}
     </pre>
   );
