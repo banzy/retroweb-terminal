@@ -380,6 +380,18 @@ export function SettingsPanel({
                 />
                 BG_RADIAL VIGNETTE
               </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={bootSeq}
+                  onChange={(e) => {
+                    playToggleClick();
+                    setBootSeq(e.target.checked);
+                  }}
+                  className="accent-[var(--phosphor)]"
+                />
+                BOOT_SEQUENCE
+              </label>
             </div>
           </div>
 
