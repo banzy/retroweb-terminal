@@ -8,7 +8,7 @@ import { TerminalOutput } from "@/components/TerminalOutput";
 import { StatusLine } from "@/components/StatusLine";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { BootSequence } from "@/components/BootSequence";
-import { fetchWebsiteContent } from "@/server/fetchWebsite.functions";
+import { fetchWebsiteContent } from "@/lib/fetchWebsite";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import { FONTS, getFontStack, type FontId } from "@/lib/crtFonts";
@@ -114,7 +114,7 @@ function Index() {
     const stopModem = playModemHandshake();
     try {
       const [result] = await Promise.all([
-        fetchWebsiteContent({ data: { url } }),
+        fetchWebsiteContent(url),
         new Promise((r) => setTimeout(r, 1800)),
       ]);
       setData(result);

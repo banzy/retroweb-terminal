@@ -1,8 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { parseWebsiteHtml, type ParsedWebsite } from "@/lib/parseWebsiteHtml";
 
-// Pose as a real browser — many sites (Wikipedia, Reddit, news sites) reject
-// unknown / bot-looking User-Agent strings with 403.
 const BROWSER_HEADERS: Record<string, string> = {
   "User-Agent":
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
@@ -24,13 +22,15 @@ function explainStatus(status: number): string {
   return `SIGNAL ERROR ${status}`;
 }
 
+function validateHttpUrl(raw: string): string {
+  if (!raw || typeof raw !== "string") throw new Error("URL required");
+  const u = new URL(raw);
+  if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("Invalid protocol");
+  return u.toString();
+}
+
 export const fetchWebsiteContent = createServerFn({ method: "POST" })
-  .inputValidator((data: { url: string }) => {
-    if (!data?.url || typeof data.url !== "string") throw new Error("URL required");
-    const u = new URL(data.url);
-    if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("Invalid protocol");
-    return { url: u.toString() };
-  })
+  .inputValidator((data: { url: string }) => ({ url: validateHttpUrl(data?.url) }))
   .handler(async ({ data }): Promise<ParsedWebsite> => {
     const res = await fetch(data.url, {
       headers: BROWSER_HEADERS,
@@ -42,11 +42,7 @@ export const fetchWebsiteContent = createServerFn({ method: "POST" })
   });
 
 export const fetchImageAsDataUrl = createServerFn({ method: "POST" })
-  .inputValidator((data: { url: string }) => {
-    const u = new URL(data.url);
-    if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("Invalid protocol");
-    return { url: u.toString() };
-  })
+  .inputValidator((data: { url: string }) => ({ url: validateHttpUrl(data?.url) }))
   .handler(
     async ({
       data,
@@ -55,7 +51,10 @@ export const fetchImageAsDataUrl = createServerFn({ method: "POST" })
       | { dataUrl: null; contentType: null; error: string }
     > => {
       try {
-        const res = await fetch(data.url, { headers: BROWSER_HEADERS });
+        const res = await fetch(data.url, {
+          headers: BROWSER_HEADERS,
+          redirect: "follow",
+        });
         if (!res.ok) {
           const reason =
             res.status === 429

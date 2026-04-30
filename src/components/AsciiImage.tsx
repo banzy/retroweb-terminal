@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { convertImageToAscii } from "@/lib/asciiImage";
-import { fetchImageAsDataUrl } from "@/server/fetchWebsite.functions";
+import { fetchImageAsDataUrl } from "@/lib/fetchWebsite";
 
 type Props = { src: string; width?: number };
 
@@ -14,7 +14,7 @@ export function AsciiImage({ src, width = 80 }: Props) {
     setError(null);
     (async () => {
       try {
-        const result = await fetchImageAsDataUrl({ data: { url: src } });
+        const result = await fetchImageAsDataUrl(src);
         if (cancelled) return;
         if (result.error || !result.dataUrl) {
           setError(result.error || "NO DATA");
