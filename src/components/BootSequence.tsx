@@ -80,7 +80,10 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
   if (phase === "done") return null;
 
   return (
-    <div className="fixed inset-0 z-[80] bg-[var(--crt-bg)] overflow-hidden">
+    <div
+      className="fixed inset-0 z-[80] overflow-hidden"
+      style={{ background: "var(--effective-bg, var(--crt-bg))" }}
+    >
       <div className="max-w-5xl mx-auto px-4 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre">
         {LINES.slice(0, idx).map((l, i) => (
           <div key={`l-${i}`}>{l.text || "\u00a0"}</div>
