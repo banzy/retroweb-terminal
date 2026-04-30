@@ -32,10 +32,6 @@ type Props = {
   setPowerAnim: (b: boolean) => void;
   burnIn: boolean;
   setBurnIn: (b: boolean) => void;
-  densityFlicker: boolean;
-  setDensityFlicker: (b: boolean) => void;
-  cornerHighlight: boolean;
-  setCornerHighlight: (b: boolean) => void;
 };
 
 export function SettingsPanel({
@@ -69,10 +65,6 @@ export function SettingsPanel({
   setPowerAnim,
   burnIn,
   setBurnIn,
-  densityFlicker,
-  setDensityFlicker,
-  cornerHighlight,
-  setCornerHighlight,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [advOpen, setAdvOpen] = useState(false);
@@ -298,8 +290,6 @@ export function SettingsPanel({
                 <ToggleRow label="TRACKING_GLITCH" checked={trackingGlitch} onChange={setTrackingGlitch} />
                 <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
                 <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
-                <ToggleRow label="DENSITY_FLICKER" checked={densityFlicker} onChange={setDensityFlicker} />
-                <ToggleRow label="CORNER_HIGHLIGHT" checked={cornerHighlight} onChange={setCornerHighlight} />
               </div>
             )}
           </div>
