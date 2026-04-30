@@ -102,7 +102,7 @@ export function TerminalShell({
           </div>
           <button
             type="button"
-            onClick={() => window.location.reload()}
+            onClick={() => window.dispatchEvent(new CustomEvent("w1975:reboot"))}
             className="crt-text text-[var(--phosphor)] hover:text-[var(--phosphor-bright)] font-mono text-xs underline underline-offset-2 shrink-0 mt-0.5"
             aria-label="Reboot machine"
           >

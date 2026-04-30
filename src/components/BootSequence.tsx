@@ -93,7 +93,7 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
         )}
         {phase === "tail" &&
           TAIL.slice(0, tailIdx).map((l, i) => <div key={`t-${i}`}>{l || "\u00a0"}</div>)}
-        <div className="crt-cursor">&nbsp;</div>
+        <div className="crt-cursor crt-text text-[var(--phosphor)]">&nbsp;</div>
       </div>
     </div>
   );
