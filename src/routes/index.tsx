@@ -8,6 +8,7 @@ import { StatusLine } from "@/components/StatusLine";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { fetchWebsiteContent } from "@/server/fetchWebsite.functions";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
+import { applyThemeVars, PRESET_THEMES, type CrtTheme } from "@/lib/crtThemes";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -29,6 +30,9 @@ function Index() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState("READY");
   const [asciiWidth, setAsciiWidth] = useState(80);
+  const [theme, setTheme] = useState<CrtTheme>(PRESET_THEMES[0]);
+  const [glassEnabled, setGlassEnabled] = useState(true);
+  const [glassIntensity, setGlassIntensity] = useState(0.35);
 
   async function handleSubmit(url: string) {
     setLoading(true);
@@ -52,10 +56,24 @@ function Index() {
   }
 
   return (
-    <TerminalShell>
+    <TerminalShell
+      style={applyThemeVars(theme)}
+      glassEnabled={glassEnabled}
+      glassIntensity={glassIntensity}
+      themeLabel={theme.label}
+    >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
-      <SettingsPanel asciiWidth={asciiWidth} setAsciiWidth={setAsciiWidth} />
+      <SettingsPanel
+        asciiWidth={asciiWidth}
+        setAsciiWidth={setAsciiWidth}
+        theme={theme}
+        setTheme={setTheme}
+        glassEnabled={glassEnabled}
+        setGlassEnabled={setGlassEnabled}
+        glassIntensity={glassIntensity}
+        setGlassIntensity={setGlassIntensity}
+      />
 
       {loading && <LoadingSequence />}
 

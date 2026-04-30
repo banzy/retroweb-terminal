@@ -158,7 +158,9 @@
   .crt-screen {
     position: relative;
     background:
-      radial-gradient(ellipse at center, oklch(0.16 0.04 150) 0%, oklch(0.08 0.02 150) 100%);
+      radial-gradient(ellipse at center,
+        color-mix(in oklab, var(--phosphor) 8%, var(--crt-bg)) 0%,
+        var(--crt-bg) 100%);
   }
   .crt-screen::before {
     content: "";
@@ -183,6 +185,50 @@
     background: radial-gradient(ellipse at center, transparent 50%, oklch(0 0 0 / 0.6) 100%);
     z-index: 51;
     animation: flicker 0.15s infinite;
+  }
+  /* Glass reflection overlay - simulates a curved CRT glass surface */
+  .crt-glass {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 52;
+    opacity: var(--glass-intensity, 0.35);
+    background:
+      /* top-left highlight sweep */
+      linear-gradient(
+        135deg,
+        oklch(1 0 0 / 0.18) 0%,
+        oklch(1 0 0 / 0.06) 18%,
+        transparent 38%,
+        transparent 62%,
+        oklch(1 0 0 / 0.04) 82%,
+        oklch(1 0 0 / 0.10) 100%
+      ),
+      /* soft glare blob */
+      radial-gradient(
+        ellipse 60% 40% at 25% 18%,
+        oklch(1 0 0 / 0.22) 0%,
+        transparent 70%
+      ),
+      /* bottom-right faint reflection */
+      radial-gradient(
+        ellipse 40% 25% at 80% 85%,
+        oklch(1 0 0 / 0.08) 0%,
+        transparent 70%
+      );
+    mix-blend-mode: screen;
+  }
+  .crt-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      oklch(1 0 0 / 0.05) 0%,
+      transparent 8%,
+      transparent 92%,
+      oklch(0 0 0 / 0.15) 100%
+    );
   }
   @keyframes flicker {
     0%, 100% { opacity: 1; }

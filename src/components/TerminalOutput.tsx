@@ -2,6 +2,7 @@ import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { asciiSeparator, nowStamp, wrapText } from "@/lib/textFormatter1975";
 import { AsciiFrame } from "./AsciiFrame";
 import { AsciiImage } from "./AsciiImage";
+import { ASCII_SATELLITE, ASCII_TV, BANNER_NO_SIGNAL } from "@/lib/asciiBanners";
 
 type Props = { data: ParsedWebsite; asciiWidth: number };
 
@@ -12,9 +13,13 @@ export function TerminalOutput({ data, asciiWidth }: Props) {
     `RECEIVED: ${nowStamp()}`,
   ];
   const firstImage = data.images[0];
+  const extraImages = data.images.slice(1, 4);
 
   return (
     <div className="mt-4 space-y-4">
+      <pre className="ascii-pre crt-text text-[var(--phosphor-dim)] text-[10px] sm:text-xs leading-tight">
+{ASCII_SATELLITE}
+      </pre>
       <AsciiFrame lines={headerLines} />
 
       {data.headings.length > 0 && (
@@ -88,18 +93,35 @@ export function TerminalOutput({ data, asciiWidth }: Props) {
           {asciiSeparator("IMAGE SIGNAL")}
         </pre>
         {firstImage ? (
-          <div className="mt-2">
-            <div className="text-[var(--phosphor-dim)] text-xs crt-text mb-2 break-all">
-              ASCII IMAGE FROM: {firstImage.src}
+          <div className="mt-2 space-y-6">
+            <div>
+              <div className="text-[var(--phosphor-dim)] text-xs crt-text mb-2 break-all">
+                ASCII IMAGE [01]: {firstImage.src}
+              </div>
+              <AsciiImage src={firstImage.src} width={asciiWidth} />
             </div>
-            <AsciiImage src={firstImage.src} width={asciiWidth} />
+            {extraImages.map((img, i) => (
+              <div key={i}>
+                <pre className="ascii-pre crt-text text-[var(--phosphor)] text-xs">
+                  {asciiSeparator(`IMAGE ${(i + 2).toString().padStart(2, "0")}`)}
+                </pre>
+                <div className="text-[var(--phosphor-dim)] text-xs crt-text my-2 break-all">
+                  SRC: {img.src}
+                </div>
+                <AsciiImage src={img.src} width={asciiWidth} />
+              </div>
+            ))}
           </div>
         ) : (
-          <pre className="ascii-pre text-[var(--phosphor-dim)] text-xs mt-2">
-            {"NO IMAGE FOUND IN TRANSMISSION."}
+          <pre className="ascii-pre text-[var(--phosphor-dim)] text-xs mt-2 leading-tight">
+{BANNER_NO_SIGNAL}
           </pre>
         )}
       </section>
+
+      <pre className="ascii-pre crt-text text-[var(--phosphor-dim)] text-[10px] sm:text-xs leading-tight">
+{ASCII_TV}
+      </pre>
 
       <pre className="ascii-pre crt-text text-[var(--phosphor)] text-xs sm:text-sm">
         {asciiSeparator("END OF TRANSMISSION")}
