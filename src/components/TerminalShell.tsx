@@ -91,13 +91,23 @@ export function TerminalShell({
       <div
         className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${powerOnAtMount ? "crt-power-on" : ""}`}
       >
-        <header className="border border-[var(--phosphor)] p-3 mb-4">
-          <div className="crt-text text-[var(--phosphor-bright)] font-bold tracking-wider text-sm sm:text-base">
-            WEB 1975 TERMINAL EMULATOR
+        <header className="border border-[var(--phosphor)] p-3 mb-4 flex items-start justify-between gap-3">
+          <div>
+            <div className="crt-text text-[var(--phosphor-bright)] font-bold tracking-wider text-sm sm:text-base">
+              WEB 1975 TERMINAL EMULATOR
+            </div>
+            <div className="crt-text text-[var(--phosphor-dim)] text-xs mt-1">
+              MODE: TEXT ONLY / ASCII / {themeLabel} PHOSPHOR
+            </div>
           </div>
-          <div className="crt-text text-[var(--phosphor-dim)] text-xs mt-1">
-            MODE: TEXT ONLY / ASCII / {themeLabel} PHOSPHOR
-          </div>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="crt-text text-[var(--phosphor)] hover:text-[var(--phosphor-bright)] font-mono text-xs underline underline-offset-2 shrink-0 mt-0.5"
+            aria-label="Reboot machine"
+          >
+            [ REBOOT ]
+          </button>
         </header>
         {children}
       </div>
