@@ -85,6 +85,21 @@ function Index() {
     });
   }, [sndKeyboard, sndModem, sndError, sndToggle]);
 
+  // Apply theme + font CSS vars to <html> so they cascade everywhere
+  // immediately (including the boot overlay's pseudo-elements and the
+  // very first paint), not only inside the TerminalShell subtree.
+  useEffect(() => {
+    const root = document.documentElement;
+    const vars = applyThemeVars(theme) as Record<string, string>;
+    for (const [k, v] of Object.entries(vars)) {
+      if (k.startsWith("--")) root.style.setProperty(k, String(v));
+    }
+    root.style.setProperty(
+      "--terminal-font",
+      getFontStack(fontId),
+    );
+  }, [theme, fontId]);
+
   async function handleSubmit(url: string) {
     setLoading(true);
     setError(null);
