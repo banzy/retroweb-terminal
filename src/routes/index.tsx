@@ -35,6 +35,7 @@ function Index() {
   const [glassIntensity, setGlassIntensity] = useState(0.35);
   const [scanlineIntensity, setScanlineIntensity] = useState(0.25);
   const [flickerSpeed, setFlickerSpeed] = useState(0.5);
+  const [scanBeamSpeed, setScanBeamSpeed] = useState(0.4);
 
   async function handleSubmit(url: string) {
     setLoading(true);
@@ -65,6 +66,7 @@ function Index() {
       themeLabel={theme.label}
       scanlineIntensity={scanlineIntensity}
       flickerSpeed={flickerSpeed}
+      scanBeamSpeed={scanBeamSpeed}
     >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
@@ -81,6 +83,8 @@ function Index() {
         setScanlineIntensity={setScanlineIntensity}
         flickerSpeed={flickerSpeed}
         setFlickerSpeed={setFlickerSpeed}
+        scanBeamSpeed={scanBeamSpeed}
+        setScanBeamSpeed={setScanBeamSpeed}
       />
 
       {loading && <LoadingSequence />}

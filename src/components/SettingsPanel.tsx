@@ -14,6 +14,8 @@ type Props = {
   setScanlineIntensity: (n: number) => void;
   flickerSpeed: number;
   setFlickerSpeed: (n: number) => void;
+  scanBeamSpeed: number;
+  setScanBeamSpeed: (n: number) => void;
 };
 
 export function SettingsPanel({
@@ -29,6 +31,8 @@ export function SettingsPanel({
   setScanlineIntensity,
   flickerSpeed,
   setFlickerSpeed,
+  scanBeamSpeed,
+  setScanBeamSpeed,
 }: Props) {
   const [open, setOpen] = useState(false);
   const isCustom = theme.id === "custom";
@@ -180,6 +184,20 @@ export function SettingsPanel({
                 />
                 <span className="w-10 text-right text-[var(--phosphor)]">
                   {flickerSpeed <= 0 ? "OFF" : `${Math.round(flickerSpeed * 100)}%`}
+                </span>
+              </label>
+              <label className="flex items-center gap-2">
+                <span className="w-24">SCAN_BEAM=</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(scanBeamSpeed * 100)}
+                  onChange={(e) => setScanBeamSpeed(parseInt(e.target.value, 10) / 100)}
+                  className="flex-1 accent-[var(--phosphor)]"
+                />
+                <span className="w-10 text-right text-[var(--phosphor)]">
+                  {scanBeamSpeed <= 0 ? "OFF" : `${Math.round(scanBeamSpeed * 100)}%`}
                 </span>
               </label>
             </div>
