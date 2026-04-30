@@ -10,6 +10,10 @@ type Props = {
   setGlassEnabled: (b: boolean) => void;
   glassIntensity: number;
   setGlassIntensity: (n: number) => void;
+  scanlineIntensity: number;
+  setScanlineIntensity: (n: number) => void;
+  flickerSpeed: number;
+  setFlickerSpeed: (n: number) => void;
 };
 
 export function SettingsPanel({
@@ -21,6 +25,10 @@ export function SettingsPanel({
   setGlassEnabled,
   glassIntensity,
   setGlassIntensity,
+  scanlineIntensity,
+  setScanlineIntensity,
+  flickerSpeed,
+  setFlickerSpeed,
 }: Props) {
   const [open, setOpen] = useState(false);
   const isCustom = theme.id === "custom";
@@ -47,9 +55,10 @@ export function SettingsPanel({
         className="w-full flex items-center justify-between px-3 py-2 hover:text-[var(--phosphor)] font-mono"
       >
         <span>[{open ? "-" : "+"}] CONFIG :: TERMINAL SETTINGS</span>
-        <span className="text-[var(--phosphor-dim)]">
+        <span className="text-[var(--phosphor-dim)] hidden sm:inline">
           THEME={theme.label} | GLASS={glassEnabled ? "ON" : "OFF"} |
-          ASCII_W={asciiWidth}
+          SCAN={Math.round(scanlineIntensity * 100)}% |
+          FLK={Math.round(flickerSpeed * 100)}%
         </span>
       </button>
 
