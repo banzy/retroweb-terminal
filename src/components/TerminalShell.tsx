@@ -10,6 +10,7 @@ type Props = {
   flickerSpeed?: number;      // 0..1 (0 = off, 1 = fastest)
   scanBeamSpeed?: number;     // 0..1 (0 = off, 1 = fastest sweep)
   bgTint?: number;            // 0..1 (0 = pure black, 1 = theme dim color)
+  bgRadial?: boolean;         // toggle radial vignette background
 };
 
 export function TerminalShell({
@@ -22,6 +23,7 @@ export function TerminalShell({
   flickerSpeed = 0.5,
   scanBeamSpeed = 0.4,
   bgTint = 0,
+  bgRadial = true,
 }: Props) {
   // Map flickerSpeed (0..1) to duration + depth.
   // 0 → effectively off (long duration, no depth).
@@ -37,7 +39,7 @@ export function TerminalShell({
 
   return (
     <div
-      className="crt-screen min-h-screen w-full"
+      className={`crt-screen min-h-screen w-full${bgRadial ? "" : " crt-flat"}`}
       style={{
         ...style,
         ["--glass-intensity" as never]: glassIntensity,
