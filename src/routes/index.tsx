@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { TerminalShell } from "@/components/TerminalShell";
+import { useLocalStorageState } from "@/hooks/useLocalStorageState";
 import { UrlCommandInput } from "@/components/UrlCommandInput";
 import { LoadingSequence } from "@/components/LoadingSequence";
 import { TerminalOutput } from "@/components/TerminalOutput";
@@ -29,15 +30,15 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState("READY");
-  const [asciiWidth, setAsciiWidth] = useState(80);
-  const [theme, setTheme] = useState<CrtTheme>(PRESET_THEMES[0]);
-  const [glassEnabled, setGlassEnabled] = useState(true);
-  const [glassIntensity, setGlassIntensity] = useState(0.35);
-  const [scanlineIntensity, setScanlineIntensity] = useState(0.25);
-  const [flickerSpeed, setFlickerSpeed] = useState(0.5);
-  const [scanBeamSpeed, setScanBeamSpeed] = useState(0.4);
-  const [bgTint, setBgTint] = useState(0);
-  const [bgRadial, setBgRadial] = useState(true);
+  const [asciiWidth, setAsciiWidth] = useLocalStorageState<number>("w1975.asciiWidth", 80);
+  const [theme, setTheme] = useLocalStorageState<CrtTheme>("w1975.theme", PRESET_THEMES[0]);
+  const [glassEnabled, setGlassEnabled] = useLocalStorageState<boolean>("w1975.glassEnabled", true);
+  const [glassIntensity, setGlassIntensity] = useLocalStorageState<number>("w1975.glassIntensity", 0.35);
+  const [scanlineIntensity, setScanlineIntensity] = useLocalStorageState<number>("w1975.scanlineIntensity", 0.25);
+  const [flickerSpeed, setFlickerSpeed] = useLocalStorageState<number>("w1975.flickerSpeed", 0.5);
+  const [scanBeamSpeed, setScanBeamSpeed] = useLocalStorageState<number>("w1975.scanBeamSpeed", 0.4);
+  const [bgTint, setBgTint] = useLocalStorageState<number>("w1975.bgTint", 0);
+  const [bgRadial, setBgRadial] = useLocalStorageState<boolean>("w1975.bgRadial", true);
 
   async function handleSubmit(url: string) {
     setLoading(true);
