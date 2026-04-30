@@ -45,6 +45,8 @@ type Props = {
   setCabinet: (c: CabinetId) => void;
   savedThemes: CrtTheme[];
   setSavedThemes: (t: CrtTheme[]) => void;
+  bootSeq: boolean;
+  setBootSeq: (b: boolean) => void;
 };
 
 export function SettingsPanel({
@@ -90,6 +92,8 @@ export function SettingsPanel({
   setCabinet,
   savedThemes,
   setSavedThemes,
+  bootSeq,
+  setBootSeq,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [advOpen, setAdvOpen] = useState(false);
@@ -420,6 +424,7 @@ export function SettingsPanel({
                 <ToggleRow label="BLOOM_HALATION" checked={bloom} onChange={setBloom} />
                 <ToggleRow label="TRACKING_GLITCH" checked={trackingGlitch} onChange={setTrackingGlitch} />
                 <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
+                <ToggleRow label="BOOT_SEQUENCE" checked={bootSeq} onChange={setBootSeq} />
                 <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
                 <div className="border-t border-[var(--phosphor-dim)] pt-2 mt-2">
                   <div className="mb-2 text-[var(--phosphor)]">&gt; SOUND:</div>
