@@ -58,6 +58,16 @@ function Index() {
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
   const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", true);
   const [booting, setBooting] = useState(bootSeq);
+  const [rebootKey, setRebootKey] = useState(0);
+
+  useEffect(() => {
+    function onReboot() {
+      setBooting(bootSeq);
+      setRebootKey((k) => k + 1);
+    }
+    window.addEventListener("w1975:reboot", onReboot);
+    return () => window.removeEventListener("w1975:reboot", onReboot);
+  }, [bootSeq]);
 
   useEffect(() => {
     setSoundFlags({
@@ -95,6 +105,7 @@ function Index() {
   return (
     <>
     <TerminalShell
+      key={rebootKey}
       style={applyThemeVars(theme)}
       glassEnabled={glassEnabled}
       glassIntensity={glassIntensity}
