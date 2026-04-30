@@ -8,7 +8,6 @@ export type FontId =
   | "space-mono"
   | "courier-prime"
   | "cutive-mono"
-  | "major-mono-display"
   | "nova-mono"
   | "azeret-mono";
 
@@ -32,7 +31,6 @@ export const FONTS: CrtFont[] = [
   { id: "space-mono", label: "SPACE MONO", stack: `"Space Mono", ui-monospace, monospace` },
   { id: "courier-prime", label: "COURIER PRIME", stack: `"Courier Prime", "Courier New", monospace` },
   { id: "cutive-mono", label: "CUTIVE MONO", stack: `"Cutive Mono", ui-monospace, monospace` },
-  { id: "major-mono-display", label: "MAJOR MONO DISPLAY", stack: `"Major Mono Display", ui-monospace, monospace` },
   { id: "nova-mono", label: "NOVA MONO", stack: `"Nova Mono", ui-monospace, monospace` },
   { id: "azeret-mono", label: "AZERET MONO", stack: `"Azeret Mono", ui-monospace, monospace` },
 ];
