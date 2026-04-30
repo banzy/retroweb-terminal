@@ -142,8 +142,7 @@ export function SettingsPanel({
         <span>[{open ? "-" : "+"}] CONFIG :: TERMINAL SETTINGS</span>
         <span className="text-[var(--phosphor-dim)] hidden sm:inline">
           THEME={theme.label} | GLASS={glassEnabled ? "ON" : "OFF"} |
-          SCAN={Math.round(scanlineIntensity * 100)}% |
-          FLK={Math.round(flickerSpeed * 100)}%
+          SCAN={Math.round(scanlineIntensity * 100)}%
         </span>
       </button>
 
