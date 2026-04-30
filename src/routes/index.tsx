@@ -63,8 +63,14 @@ function Index() {
 
   useEffect(() => {
     function onReboot() {
+      const y = window.scrollY;
       setBooting(bootSeq);
       setRebootKey((k) => k + 1);
+      // Restore scroll after the remount paints
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: y, left: 0, behavior: "auto" });
+        requestAnimationFrame(() => window.scrollTo({ top: y, left: 0, behavior: "auto" }));
+      });
     }
     window.addEventListener("w1975:reboot", onReboot);
     return () => window.removeEventListener("w1975:reboot", onReboot);
