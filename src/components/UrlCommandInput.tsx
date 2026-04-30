@@ -35,7 +35,7 @@ export function UrlCommandInput({ onSubmit, loading }: Props) {
             }}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder="https://example.com"
+            placeholder=""
             disabled={loading}
             className="flex-1 bg-transparent border-0 outline-none crt-text text-[var(--phosphor)] placeholder:text-[var(--phosphor-dim)] py-2 font-mono caret-transparent w-full"
             autoFocus
