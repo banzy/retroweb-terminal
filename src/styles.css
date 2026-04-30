@@ -157,11 +157,15 @@
 @layer utilities {
   .crt-screen {
     position: relative;
-    /* --bg-tint blends pure black -> theme dim phosphor color */
+    /* --bg-tint blends pure black -> theme dim phosphor color.
+       Set .crt-flat to disable the radial vignette. */
     background:
       radial-gradient(ellipse at center,
         color-mix(in oklab, var(--phosphor) 8%, var(--effective-bg, var(--crt-bg))) 0%,
         var(--effective-bg, var(--crt-bg)) 100%);
+  }
+  .crt-screen.crt-flat {
+    background: var(--effective-bg, var(--crt-bg));
   }
   .crt-screen::after {
     content: "";

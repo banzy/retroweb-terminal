@@ -37,6 +37,7 @@ function Index() {
   const [flickerSpeed, setFlickerSpeed] = useState(0.5);
   const [scanBeamSpeed, setScanBeamSpeed] = useState(0.4);
   const [bgTint, setBgTint] = useState(0);
+  const [bgRadial, setBgRadial] = useState(true);
 
   async function handleSubmit(url: string) {
     setLoading(true);
@@ -69,6 +70,7 @@ function Index() {
       flickerSpeed={flickerSpeed}
       scanBeamSpeed={scanBeamSpeed}
       bgTint={bgTint}
+      bgRadial={bgRadial}
     >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
@@ -89,6 +91,8 @@ function Index() {
         setScanBeamSpeed={setScanBeamSpeed}
         bgTint={bgTint}
         setBgTint={setBgTint}
+        bgRadial={bgRadial}
+        setBgRadial={setBgRadial}
       />
 
       {loading && <LoadingSequence />}

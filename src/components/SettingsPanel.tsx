@@ -18,6 +18,8 @@ type Props = {
   setScanBeamSpeed: (n: number) => void;
   bgTint: number;
   setBgTint: (n: number) => void;
+  bgRadial: boolean;
+  setBgRadial: (b: boolean) => void;
 };
 
 export function SettingsPanel({
@@ -37,6 +39,8 @@ export function SettingsPanel({
   setScanBeamSpeed,
   bgTint,
   setBgTint,
+  bgRadial,
+  setBgRadial,
 }: Props) {
   const [open, setOpen] = useState(false);
   const isCustom = theme.id === "custom";
@@ -203,6 +207,15 @@ export function SettingsPanel({
                 <span className="w-10 text-right text-[var(--phosphor)]">
                   {Math.round(bgTint * 100)}%
                 </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={bgRadial}
+                  onChange={(e) => setBgRadial(e.target.checked)}
+                  className="accent-[var(--phosphor)]"
+                />
+                BG_RADIAL VIGNETTE
               </label>
             </div>
           </div>
