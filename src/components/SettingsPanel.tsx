@@ -163,20 +163,6 @@ export function SettingsPanel({
             <div className="mb-2 text-[var(--phosphor)]">&gt; CRT EFFECTS:</div>
             <div className="space-y-2">
               <label className="flex items-center gap-2">
-                <span className="w-24">SCANLINES=</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={Math.round(scanlineIntensity * 100)}
-                  onChange={(e) => setScanlineIntensity(parseInt(e.target.value, 10) / 100)}
-                  className="flex-1 accent-[var(--phosphor)]"
-                />
-                <span className="w-10 text-right text-[var(--phosphor)]">
-                  {Math.round(scanlineIntensity * 100)}%
-                </span>
-              </label>
-              <label className="flex items-center gap-2">
                 <span className="w-24">FLICKER=</span>
                 <input
                   type="range"
