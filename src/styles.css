@@ -246,6 +246,22 @@
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
   }
+  /* Solid block cursor used inside the URL input */
+  .terminal-cursor {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.6ch;
+    height: 1.1em;
+    background: var(--phosphor);
+    box-shadow: 0 0 4px var(--phosphor), 0 0 10px color-mix(in oklab, var(--phosphor) 60%, transparent);
+    animation: cursor-blink 1.05s steps(2, end) infinite;
+    pointer-events: none;
+  }
+  @keyframes cursor-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
   .ascii-pre {
     white-space: pre;
     font-family: ui-monospace, "Courier New", monospace;

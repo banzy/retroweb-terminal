@@ -8,6 +8,7 @@ type Props = {
 
 export function UrlCommandInput({ onSubmit, loading }: Props) {
   const [value, setValue] = useState("");
+  const [focused, setFocused] = useState(false);
 
   function handle(e: React.FormEvent) {
     e.preventDefault();
@@ -21,20 +22,35 @@ export function UrlCommandInput({ onSubmit, loading }: Props) {
         <label className="crt-text text-[var(--phosphor)] text-sm whitespace-nowrap self-center">
           {"> LOAD WEBSITE:"}
         </label>
-        <div className="flex-1 flex items-center border border-[var(--phosphor-dim)] px-2">
+        <div className="flex-1 flex items-center border border-[var(--phosphor-dim)] px-2 relative">
           <span className="text-[var(--phosphor-dim)] mr-1">[</span>
+          <div className="relative flex-1 flex items-center">
           <input
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
             placeholder="https://example.com"
             disabled={loading}
-            className="flex-1 bg-transparent border-0 outline-none crt-text text-[var(--phosphor)] placeholder:text-[var(--phosphor-dim)] py-2 font-mono"
+            className="flex-1 bg-transparent border-0 outline-none crt-text text-[var(--phosphor)] placeholder:text-[var(--phosphor-dim)] py-2 font-mono caret-transparent w-full"
             autoFocus
             spellCheck={false}
             autoCorrect="off"
             autoCapitalize="off"
           />
+          {/* Blinking block cursor — sits after typed text. Hidden while loading. */}
+          {!loading && (
+            <span
+              aria-hidden="true"
+              className="terminal-cursor"
+              style={{
+                left: `${value.length}ch`,
+                opacity: focused || value.length === 0 ? 1 : 0.6,
+              }}
+            />
+          )}
+          </div>
           <span className="text-[var(--phosphor-dim)] ml-1">]</span>
         </div>
         <button
