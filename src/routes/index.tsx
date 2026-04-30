@@ -9,7 +9,7 @@ import { StatusLine } from "@/components/StatusLine";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { fetchWebsiteContent } from "@/server/fetchWebsite.functions";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
-import { applyThemeVars, PRESET_THEMES, type CrtTheme } from "@/lib/crtThemes";
+import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import { useEffect } from "react";
 import { setSoundFlags, playModemHandshake, playErrorBeep } from "@/lib/crtSounds";
 
@@ -53,6 +53,8 @@ function Index() {
   const [sndModem, setSndModem] = useLocalStorageState<boolean>("w1975.sndModem", false);
   const [sndError, setSndError] = useLocalStorageState<boolean>("w1975.sndError", false);
   const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", false);
+  const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "none");
+  const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
 
   useEffect(() => {
     setSoundFlags({
@@ -104,6 +106,7 @@ function Index() {
       trackingGlitch={trackingGlitch}
       powerAnim={powerAnim}
       burnIn={burnIn}
+      cabinet={cabinet}
     >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
@@ -146,6 +149,10 @@ function Index() {
         setSndError={setSndError}
         sndToggle={sndToggle}
         setSndToggle={setSndToggle}
+        cabinet={cabinet}
+        setCabinet={setCabinet}
+        savedThemes={savedThemes}
+        setSavedThemes={setSavedThemes}
       />
 
       {loading && <LoadingSequence />}
