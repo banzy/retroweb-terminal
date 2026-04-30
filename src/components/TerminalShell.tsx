@@ -12,6 +12,7 @@ type Props = {
   bgTint?: number;
   bgRadial?: boolean;
   curvature?: boolean;
+  curvatureAmount?: number;
   rgbSplit?: number;
   bloom?: boolean;
   trackingGlitch?: boolean;
@@ -31,6 +32,7 @@ export function TerminalShell({
   bgTint = 0,
   bgRadial = true,
   curvature = false,
+  curvatureAmount = 0.5,
   rgbSplit = 0,
   bloom = false,
   trackingGlitch = false,
@@ -72,6 +74,7 @@ export function TerminalShell({
         ["--scan-beam-duration" as never]: beamDuration,
         ["--effective-bg" as never]: effectiveBg,
         ["--rgb-split" as never]: `${(rgbSplit * 3).toFixed(2)}px`,
+        ["--curve-amount" as never]: curvatureAmount,
         backgroundColor: effectiveBg,
       }}
     >
@@ -79,10 +82,8 @@ export function TerminalShell({
         <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
           <defs>
             <filter id="crt-barrel">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="0.3" />
-              <feComponentTransfer>
-                <feFuncA type="identity" />
-              </feComponentTransfer>
+              <feGaussianBlur in="SourceGraphic" stdDeviation="0.3" result="blur" />
+              <feDisplacementMap in="blur" in2="blur" scale={curvatureAmount * 30} />
             </filter>
           </defs>
         </svg>
