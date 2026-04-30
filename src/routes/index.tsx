@@ -60,10 +60,12 @@ function Index() {
   const [fontId, setFontId] = useLocalStorageState<FontId>("w1975.fontId", "system");
   const [booting, setBooting] = useState(bootSeq);
   const [rebootKey, setRebootKey] = useState(0);
+  const [forcePowerOn, setForcePowerOn] = useState(false);
 
   useEffect(() => {
     function onReboot() {
       const y = window.scrollY;
+      setForcePowerOn(true);
       setBooting(bootSeq);
       setRebootKey((k) => k + 1);
       // Restore scroll after the remount paints
@@ -140,7 +142,7 @@ function Index() {
       rgbSplit={rgbSplit}
       bloom={bloom}
       trackingGlitch={trackingGlitch}
-      powerAnim={powerAnim}
+      powerAnim={powerAnim || forcePowerOn}
       burnIn={burnIn}
       cabinet={cabinet}
     >
@@ -222,8 +224,11 @@ EXAMPLES:
       <StatusLine status={status} />
       {booting && bootSeq && (
         <BootSequence
-          delayMs={powerAnim ? 1100 : 0}
-          onDone={() => setBooting(false)}
+          delayMs={powerAnim || forcePowerOn ? 1100 : 0}
+          onDone={() => {
+            setBooting(false);
+            setForcePowerOn(false);
+          }}
         />
       )}
     </TerminalShell>
