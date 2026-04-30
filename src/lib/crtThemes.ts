@@ -48,6 +48,47 @@ export const PRESET_THEMES: CrtTheme[] = [
     bright: "#ff9999",
     dim: "#8a1c1c",
   },
+  {
+    id: "ibm5151",
+    label: "IBM 5151",
+    bg: "#000000",
+    phosphor: "#f5f5dc",
+    bright: "#ffffff",
+    dim: "#7a7a6b",
+  },
+  {
+    id: "hercules",
+    label: "HERCULES",
+    bg: "#000000",
+    phosphor: "#7fff8a",
+    bright: "#c8ffc8",
+    dim: "#2f7a3a",
+  },
+  {
+    id: "plasma",
+    label: "PLASMA ORANGE",
+    bg: "#0a0400",
+    phosphor: "#ff7a18",
+    bright: "#ffc070",
+    dim: "#8a3a00",
+  },
+  {
+    id: "macplus",
+    label: "MAC PLUS",
+    bg: "#d8d4c8",
+    phosphor: "#1a1a1a",
+    bright: "#000000",
+    dim: "#6a6a60",
+  },
+];
+
+export type CabinetId = "none" | "vt100" | "pet2001" | "apple3";
+
+export const CABINETS: Array<{ id: CabinetId; label: string }> = [
+  { id: "none", label: "NONE" },
+  { id: "vt100", label: "VT100" },
+  { id: "pet2001", label: "PET 2001" },
+  { id: "apple3", label: "APPLE ///" },
 ];
 
 export function applyThemeVars(t: CrtTheme): React.CSSProperties {
