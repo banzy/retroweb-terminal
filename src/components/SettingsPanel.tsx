@@ -22,8 +22,6 @@ type Props = {
   setBgRadial: (b: boolean) => void;
   curvature: boolean;
   setCurvature: (b: boolean) => void;
-  curvatureAmount: number;
-  setCurvatureAmount: (n: number) => void;
   rgbSplit: number;
   setRgbSplit: (n: number) => void;
   bloom: boolean;
@@ -57,8 +55,6 @@ export function SettingsPanel({
   setBgRadial,
   curvature,
   setCurvature,
-  curvatureAmount,
-  setCurvatureAmount,
   rgbSplit,
   setRgbSplit,
   bloom,
@@ -276,21 +272,6 @@ export function SettingsPanel({
             {advOpen && (
               <div className="mt-3 space-y-2">
                 <ToggleRow label="SCREEN_CURVATURE" checked={curvature} onChange={setCurvature} />
-                <label className="flex items-center gap-2">
-                  <span className="w-40">CURVE_AMOUNT=</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={Math.round(curvatureAmount * 100)}
-                    onChange={(e) => setCurvatureAmount(parseInt(e.target.value, 10) / 100)}
-                    disabled={!curvature}
-                    className="flex-1 accent-[var(--phosphor)]"
-                  />
-                  <span className="w-10 text-right text-[var(--phosphor)]">
-                    {Math.round(curvatureAmount * 100)}%
-                  </span>
-                </label>
                 <label className="flex items-center gap-2">
                   <span className="w-40">RGB_SPLIT=</span>
                   <input

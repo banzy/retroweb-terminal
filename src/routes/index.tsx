@@ -41,7 +41,6 @@ function Index() {
   const [bgRadial, setBgRadial] = useLocalStorageState<boolean>("w1975.bgRadial", true);
   // Advanced
   const [curvature, setCurvature] = useLocalStorageState<boolean>("w1975.curvature", false);
-  const [curvatureAmount, setCurvatureAmount] = useLocalStorageState<number>("w1975.curvatureAmount", 0.5);
   const [rgbSplit, setRgbSplit] = useLocalStorageState<number>("w1975.rgbSplit", 0);
   const [bloom, setBloom] = useLocalStorageState<boolean>("w1975.bloom", false);
   const [trackingGlitch, setTrackingGlitch] = useLocalStorageState<boolean>("w1975.trackingGlitch", false);
@@ -81,7 +80,6 @@ function Index() {
       bgTint={bgTint}
       bgRadial={bgRadial}
       curvature={curvature}
-      curvatureAmount={curvatureAmount}
       rgbSplit={rgbSplit}
       bloom={bloom}
       trackingGlitch={trackingGlitch}
@@ -111,8 +109,6 @@ function Index() {
         setBgRadial={setBgRadial}
         curvature={curvature}
         setCurvature={setCurvature}
-        curvatureAmount={curvatureAmount}
-        setCurvatureAmount={setCurvatureAmount}
         rgbSplit={rgbSplit}
         setRgbSplit={setRgbSplit}
         bloom={bloom}
