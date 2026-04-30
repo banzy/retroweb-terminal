@@ -184,5 +184,12 @@ EXAMPLES:
 
       <StatusLine status={status} />
     </TerminalShell>
+    {booting && (
+      <BootSequence
+        delayMs={powerAnim ? 1100 : 0}
+        onDone={() => setBooting(false)}
+      />
+    )}
+    </>
   );
 }
