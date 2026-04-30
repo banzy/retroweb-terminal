@@ -10,6 +10,8 @@ import { SettingsPanel } from "@/components/SettingsPanel";
 import { fetchWebsiteContent } from "@/server/fetchWebsite.functions";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme } from "@/lib/crtThemes";
+import { useEffect } from "react";
+import { setSoundFlags, playModemHandshake, playErrorBeep } from "@/lib/crtSounds";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -46,12 +48,27 @@ function Index() {
   const [trackingGlitch, setTrackingGlitch] = useLocalStorageState<boolean>("w1975.trackingGlitch", false);
   const [powerAnim, setPowerAnim] = useLocalStorageState<boolean>("w1975.powerAnim", false);
   const [burnIn, setBurnIn] = useLocalStorageState<boolean>("w1975.burnIn", false);
+  // Sound toggles
+  const [sndKeyboard, setSndKeyboard] = useLocalStorageState<boolean>("w1975.sndKeyboard", false);
+  const [sndModem, setSndModem] = useLocalStorageState<boolean>("w1975.sndModem", false);
+  const [sndError, setSndError] = useLocalStorageState<boolean>("w1975.sndError", false);
+  const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", false);
+
+  useEffect(() => {
+    setSoundFlags({
+      keyboard: sndKeyboard,
+      modem: sndModem,
+      errorBeep: sndError,
+      toggleClick: sndToggle,
+    });
+  }, [sndKeyboard, sndModem, sndError, sndToggle]);
 
   async function handleSubmit(url: string) {
     setLoading(true);
     setError(null);
     setData(null);
     setStatus(`FETCHING ${url}`);
+    const stopModem = playModemHandshake();
     try {
       const [result] = await Promise.all([
         fetchWebsiteContent({ data: { url } }),
@@ -63,8 +80,10 @@ function Index() {
       const msg = e instanceof Error ? e.message : "UNKNOWN ERROR";
       setError(msg);
       setStatus(`ERROR: ${msg}`);
+      playErrorBeep();
     } finally {
       setLoading(false);
+      stopModem();
     }
   }
 
@@ -119,6 +138,14 @@ function Index() {
         setPowerAnim={setPowerAnim}
         burnIn={burnIn}
         setBurnIn={setBurnIn}
+        sndKeyboard={sndKeyboard}
+        setSndKeyboard={setSndKeyboard}
+        sndModem={sndModem}
+        setSndModem={setSndModem}
+        sndError={sndError}
+        setSndError={setSndError}
+        sndToggle={sndToggle}
+        setSndToggle={setSndToggle}
       />
 
       {loading && <LoadingSequence />}
