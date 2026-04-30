@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PRESET_THEMES, type CrtTheme } from "@/lib/crtThemes";
+import { PRESET_THEMES, CABINETS, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import { playToggleClick } from "@/lib/crtSounds";
 
 type Props = {
@@ -41,6 +41,10 @@ type Props = {
   setSndError: (b: boolean) => void;
   sndToggle: boolean;
   setSndToggle: (b: boolean) => void;
+  cabinet: CabinetId;
+  setCabinet: (c: CabinetId) => void;
+  savedThemes: CrtTheme[];
+  setSavedThemes: (t: CrtTheme[]) => void;
 };
 
 export function SettingsPanel({
@@ -82,9 +86,15 @@ export function SettingsPanel({
   setSndError,
   sndToggle,
   setSndToggle,
+  cabinet,
+  setCabinet,
+  savedThemes,
+  setSavedThemes,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [advOpen, setAdvOpen] = useState(false);
+  const [themesOpen, setThemesOpen] = useState(false);
+  const [saveName, setSaveName] = useState("");
   const isCustom = theme.id === "custom";
 
   function updateCustom(field: "bg" | "phosphor" | "bright" | "dim", value: string) {
@@ -99,6 +109,20 @@ export function SettingsPanel({
   function selectPreset(id: string) {
     const p = PRESET_THEMES.find((x) => x.id === id);
     if (p) setTheme(p);
+  }
+
+  function saveCurrentTheme() {
+    const name = saveName.trim() || `CUSTOM ${savedThemes.length + 1}`;
+    const id = `saved-${Date.now()}`;
+    setSavedThemes([
+      ...savedThemes,
+      { id, label: name.toUpperCase(), bg: theme.bg, phosphor: theme.phosphor, bright: theme.bright, dim: theme.dim },
+    ]);
+    setSaveName("");
+  }
+
+  function deleteSaved(id: string) {
+    setSavedThemes(savedThemes.filter((t) => t.id !== id));
   }
 
   return (
@@ -118,60 +142,150 @@ export function SettingsPanel({
 
       {open && (
         <div className="border-t border-[var(--phosphor-dim)] p-3 space-y-4">
-          {/* Presets */}
+          {/* Themes & presets */}
           <div>
-            <div className="mb-2 text-[var(--phosphor)]">&gt; COLOR PRESETS:</div>
-            <div className="flex flex-wrap gap-2">
-              {PRESET_THEMES.map((p) => {
-                const active = theme.id === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => selectPreset(p.id)}
-                    className="border px-2 py-1 font-mono text-xs"
-                    style={{
-                      background: p.bg,
-                      color: p.phosphor,
-                      borderColor: active ? p.bright : p.dim,
-                      textShadow: `0 0 4px ${p.phosphor}`,
-                    }}
-                  >
-                    {active ? "[*]" : "[ ]"} {p.label}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                onClick={() =>
-                  setTheme({
-                    id: "custom",
-                    label: "CUSTOM",
-                    bg: theme.bg,
-                    phosphor: theme.phosphor,
-                    bright: theme.bright,
-                    dim: theme.dim,
-                  })
-                }
-                className="border border-[var(--phosphor-dim)] px-2 py-1 font-mono text-xs text-[var(--phosphor)]"
-              >
-                {isCustom ? "[*]" : "[ ]"} CUSTOM
-              </button>
-            </div>
-          </div>
+            <button
+              type="button"
+              onClick={() => setThemesOpen((v) => !v)}
+              className="text-[var(--phosphor)] hover:text-[var(--phosphor-bright)] font-mono mb-2"
+            >
+              [{themesOpen ? "-" : "+"}] THEMES &amp; PRESETS
+            </button>
+            {themesOpen && (
+              <div className="space-y-3">
+                <div>
+                  <div className="mb-1 text-[var(--phosphor)]">&gt; PHOSPHOR PRESETS:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {PRESET_THEMES.map((p) => {
+                      const active = theme.id === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => selectPreset(p.id)}
+                          className="border px-2 py-1 font-mono text-xs"
+                          style={{
+                            background: p.bg,
+                            color: p.phosphor,
+                            borderColor: active ? p.bright : p.dim,
+                            textShadow: `0 0 4px ${p.phosphor}`,
+                          }}
+                        >
+                          {active ? "[*]" : "[ ]"} {p.label}
+                        </button>
+                      );
+                    })}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setTheme({
+                          id: "custom",
+                          label: "CUSTOM",
+                          bg: theme.bg,
+                          phosphor: theme.phosphor,
+                          bright: theme.bright,
+                          dim: theme.dim,
+                        })
+                      }
+                      className="border border-[var(--phosphor-dim)] px-2 py-1 font-mono text-xs text-[var(--phosphor)]"
+                    >
+                      {isCustom ? "[*]" : "[ ]"} CUSTOM
+                    </button>
+                  </div>
+                </div>
 
-          {/* Custom colors */}
-          {isCustom && (
-            <div>
-              <div className="mb-2 text-[var(--phosphor)]">&gt; CUSTOM COLORS:</div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <ColorField label="BG" value={theme.bg} onChange={(v) => updateCustom("bg", v)} />
-                <ColorField label="TEXT" value={theme.phosphor} onChange={(v) => updateCustom("phosphor", v)} />
-                <ColorField label="BRIGHT" value={theme.bright} onChange={(v) => updateCustom("bright", v)} />
-                <ColorField label="DIM" value={theme.dim} onChange={(v) => updateCustom("dim", v)} />
+                {isCustom && (
+                  <div>
+                    <div className="mb-1 text-[var(--phosphor)]">&gt; CUSTOM COLORS:</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <ColorField label="BG" value={theme.bg} onChange={(v) => updateCustom("bg", v)} />
+                      <ColorField label="TEXT" value={theme.phosphor} onChange={(v) => updateCustom("phosphor", v)} />
+                      <ColorField label="BRIGHT" value={theme.bright} onChange={(v) => updateCustom("bright", v)} />
+                      <ColorField label="DIM" value={theme.dim} onChange={(v) => updateCustom("dim", v)} />
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <input
+                        type="text"
+                        value={saveName}
+                        onChange={(e) => setSaveName(e.target.value)}
+                        placeholder="THEME NAME"
+                        className="flex-1 bg-transparent border border-[var(--phosphor-dim)] text-[var(--phosphor)] px-2 py-1 font-mono text-xs outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={saveCurrentTheme}
+                        className="border border-[var(--phosphor)] text-[var(--phosphor)] px-2 py-1 font-mono text-xs hover:bg-[var(--phosphor)] hover:text-[var(--primary-foreground)]"
+                      >
+                        [ SAVE ]
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {savedThemes.length > 0 && (
+                  <div>
+                    <div className="mb-1 text-[var(--phosphor)]">&gt; SAVED THEMES:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {savedThemes.map((p) => {
+                        const active = theme.id === p.id;
+                        return (
+                          <span
+                            key={p.id}
+                            className="inline-flex items-center border font-mono text-xs"
+                            style={{
+                              background: p.bg,
+                              color: p.phosphor,
+                              borderColor: active ? p.bright : p.dim,
+                              textShadow: `0 0 4px ${p.phosphor}`,
+                            }}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => setTheme(p)}
+                              className="px-2 py-1"
+                            >
+                              {active ? "[*]" : "[ ]"} {p.label}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => deleteSaved(p.id)}
+                              className="px-1 py-1 border-l opacity-70 hover:opacity-100"
+                              style={{ borderColor: p.dim }}
+                              aria-label={`Delete ${p.label}`}
+                            >
+                              [x]
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <div className="mb-1 text-[var(--phosphor)]">&gt; CABINET FRAME:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {CABINETS.map((c) => {
+                      const active = cabinet === c.id;
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => {
+                            playToggleClick();
+                            setCabinet(c.id);
+                          }}
+                          className="border border-[var(--phosphor-dim)] text-[var(--phosphor)] px-2 py-1 font-mono text-xs hover:border-[var(--phosphor)]"
+                        >
+                          {active ? "[*]" : "[ ]"} {c.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Glass */}
           <div>
