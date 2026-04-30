@@ -294,6 +294,34 @@ export function SettingsPanel({
             )}
           </div>
 
+          {/* Fonts */}
+          <div>
+            <div className="mb-2 text-[var(--phosphor)]">&gt; TERMINAL FONT:</div>
+            <div className="flex flex-wrap gap-2">
+              {fonts.map((f) => {
+                const active = fontId === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => {
+                      playToggleClick();
+                      setFontId(f.id);
+                    }}
+                    className="border px-2 py-1 text-xs"
+                    style={{
+                      fontFamily: f.stack,
+                      borderColor: active ? "var(--phosphor)" : "var(--phosphor-dim)",
+                      color: "var(--phosphor)",
+                    }}
+                  >
+                    {active ? "[*]" : "[ ]"} {f.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Glass */}
           <div>
             <div className="mb-2 text-[var(--phosphor)]">&gt; CRT GLASS REFLECTION:</div>
