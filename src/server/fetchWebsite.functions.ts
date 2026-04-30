@@ -47,19 +47,40 @@ export const fetchImageAsDataUrl = createServerFn({ method: "POST" })
     if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("Invalid protocol");
     return { url: u.toString() };
   })
-  .handler(async ({ data }): Promise<{ dataUrl: string; contentType: string }> => {
-    const res = await fetch(data.url, { headers: BROWSER_HEADERS });
-    if (!res.ok) throw new Error(`IMAGE FETCH FAILED ${res.status}`);
-    const contentType = res.headers.get("content-type") || "image/jpeg";
-    const buf = await res.arrayBuffer();
-    // Limit to ~3MB
-    if (buf.byteLength > 3_500_000) throw new Error("IMAGE TOO LARGE");
-    let binary = "";
-    const bytes = new Uint8Array(buf);
-    const chunk = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunk) {
-      binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunk)));
-    }
-    const base64 = btoa(binary);
-    return { dataUrl: `data:${contentType};base64,${base64}`, contentType };
-  });
+  .handler(
+    async ({
+      data,
+    }): Promise<
+      | { dataUrl: string; contentType: string; error?: undefined }
+      | { dataUrl: null; contentType: null; error: string }
+    > => {
+      try {
+        const res = await fetch(data.url, { headers: BROWSER_HEADERS });
+        if (!res.ok) {
+          const reason =
+            res.status === 429
+              ? "RATE LIMITED BY HOST"
+              : res.status === 403
+                ? "HOST REFUSED IMAGE"
+                : `HTTP ${res.status}`;
+          return { dataUrl: null, contentType: null, error: reason };
+        }
+        const contentType = res.headers.get("content-type") || "image/jpeg";
+        const buf = await res.arrayBuffer();
+        if (buf.byteLength > 3_500_000) {
+          return { dataUrl: null, contentType: null, error: "IMAGE TOO LARGE" };
+        }
+        let binary = "";
+        const bytes = new Uint8Array(buf);
+        const chunk = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunk) {
+          binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunk)));
+        }
+        const base64 = btoa(binary);
+        return { dataUrl: `data:${contentType};base64,${base64}`, contentType };
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "UNKNOWN";
+        return { dataUrl: null, contentType: null, error: `NETWORK :: ${msg}` };
+      }
+    },
+  );
