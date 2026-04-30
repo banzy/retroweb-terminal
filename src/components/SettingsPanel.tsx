@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PRESET_THEMES, CABINETS, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
+import type { CrtFont, FontId } from "@/lib/crtFonts";
 import { playToggleClick } from "@/lib/crtSounds";
 
 type Props = {
@@ -45,6 +46,9 @@ type Props = {
   setSavedThemes: (t: CrtTheme[]) => void;
   bootSeq: boolean;
   setBootSeq: (b: boolean) => void;
+  fontId: FontId;
+  setFontId: (id: FontId) => void;
+  fonts: CrtFont[];
 };
 
 export function SettingsPanel({
@@ -90,6 +94,9 @@ export function SettingsPanel({
   setSavedThemes,
   bootSeq,
   setBootSeq,
+  fontId,
+  setFontId,
+  fonts,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [advOpen, setAdvOpen] = useState(false);
