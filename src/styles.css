@@ -163,21 +163,6 @@
         color-mix(in oklab, var(--phosphor) 8%, var(--effective-bg, var(--crt-bg))) 0%,
         var(--effective-bg, var(--crt-bg)) 100%);
   }
-  .crt-screen::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 2px,
-      oklch(0 0 0 / var(--scanline-alpha, 0.25)) 3px,
-      oklch(0 0 0 / var(--scanline-alpha, 0.25)) 3px
-    );
-    z-index: 50;
-    mix-blend-mode: multiply;
-  }
   .crt-screen::after {
     content: "";
     position: fixed;
