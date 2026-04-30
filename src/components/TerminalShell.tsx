@@ -18,6 +18,7 @@ type Props = {
   powerAnim?: boolean;
   burnIn?: boolean;
   cabinet?: CabinetId;
+  collapsing?: boolean;
 };
 
 export function TerminalShell({
@@ -37,6 +38,7 @@ export function TerminalShell({
   powerAnim = false,
   burnIn = false,
   cabinet = "none",
+  collapsing = false,
 }: Props) {
   const flickerDuration = flickerSpeed <= 0 ? "10s" : `${(0.4 - flickerSpeed * 0.35).toFixed(3)}s`;
   const flickerDepth = flickerSpeed <= 0 ? 0 : 0.02 + flickerSpeed * 0.08;
@@ -84,7 +86,7 @@ export function TerminalShell({
         </svg>
       )}
       <div
-        className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${powerOnAtMount ? "crt-power-on" : ""}`}
+        className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${collapsing ? "crt-power-off" : powerOnAtMount ? "crt-power-on" : ""}`}
       >
         <header className="border border-[var(--phosphor)] p-3 mb-4 flex items-start justify-between gap-3">
           <div>
