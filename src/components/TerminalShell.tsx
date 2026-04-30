@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
@@ -6,11 +6,19 @@ type Props = {
   glassEnabled?: boolean;
   glassIntensity?: number;
   themeLabel?: string;
-  scanlineIntensity?: number; // 0..1
-  flickerSpeed?: number;      // 0..1 (0 = off, 1 = fastest)
-  scanBeamSpeed?: number;     // 0..1 (0 = off, 1 = fastest sweep)
-  bgTint?: number;            // 0..1 (0 = pure black, 1 = theme dim color)
-  bgRadial?: boolean;         // toggle radial vignette background
+  scanlineIntensity?: number;
+  flickerSpeed?: number;
+  scanBeamSpeed?: number;
+  bgTint?: number;
+  bgRadial?: boolean;
+  curvature?: boolean;
+  rgbSplit?: number;
+  bloom?: boolean;
+  trackingGlitch?: boolean;
+  powerAnim?: boolean;
+  burnIn?: boolean;
+  densityFlicker?: boolean;
+  cornerHighlight?: boolean;
 };
 
 export function TerminalShell({
@@ -24,22 +32,53 @@ export function TerminalShell({
   scanBeamSpeed = 0.4,
   bgTint = 0,
   bgRadial = true,
+  curvature = false,
+  rgbSplit = 0,
+  bloom = false,
+  trackingGlitch = false,
+  powerAnim = false,
+  burnIn = false,
+  densityFlicker = false,
+  cornerHighlight = false,
 }: Props) {
-  // Map flickerSpeed (0..1) to duration + depth.
-  // 0 → effectively off (long duration, no depth).
   const flickerDuration = flickerSpeed <= 0 ? "10s" : `${(0.4 - flickerSpeed * 0.35).toFixed(3)}s`;
   const flickerDepth = flickerSpeed <= 0 ? 0 : 0.02 + flickerSpeed * 0.08;
-  // Map scanBeamSpeed: 0 → off, otherwise 30s (very slow) → 6s (fast)
   const beamEnabled = scanBeamSpeed > 0;
   const beamDuration = beamEnabled ? `${(30 - scanBeamSpeed * 24).toFixed(2)}s` : "0s";
-  // Mix pure black with theme's --phosphor-dim by bgTint%.
   const effectiveBg = `color-mix(in oklab, var(--phosphor-dim) ${Math.round(
     bgTint * 100,
   )}%, #000000)`;
 
+  // Power-on plays only on first mount when enabled.
+  const [powerKey] = useState(() => Date.now());
+
+  // Density-flicker depth proportional to visible text length.
+  const innerRef = useRef<HTMLDivElement | null>(null);
+  const [densityDepth, setDensityDepth] = useState(0.04);
+  useEffect(() => {
+    if (!densityFlicker) return;
+    const el = innerRef.current;
+    if (!el) return;
+    const len = (el.innerText || "").length;
+    setDensityDepth(Math.min(0.12, 0.02 + len / 50000));
+  }, [densityFlicker, children]);
+
+  const classes = [
+    "crt-screen min-h-screen w-full",
+    bgRadial ? "" : "crt-flat",
+    curvature ? "crt-curve" : "",
+    rgbSplit > 0 ? "crt-rgb-split" : "",
+    bloom ? "crt-bloom" : "",
+    trackingGlitch ? "crt-tracking-glitch" : "",
+    burnIn ? "crt-burnin" : "",
+    densityFlicker ? "crt-density-flicker" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div
-      className={`crt-screen min-h-screen w-full${bgRadial ? "" : " crt-flat"}`}
+      className={classes}
       style={{
         ...style,
         ["--glass-intensity" as never]: glassIntensity,
@@ -48,10 +87,28 @@ export function TerminalShell({
         ["--flicker-depth" as never]: flickerDepth,
         ["--scan-beam-duration" as never]: beamDuration,
         ["--effective-bg" as never]: effectiveBg,
+        ["--rgb-split" as never]: `${(rgbSplit * 3).toFixed(2)}px`,
+        ["--density-depth" as never]: densityDepth,
         backgroundColor: effectiveBg,
       }}
     >
-      <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10">
+      {curvature && (
+        <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+          <defs>
+            <filter id="crt-barrel">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="0.3" />
+              <feComponentTransfer>
+                <feFuncA type="identity" />
+              </feComponentTransfer>
+            </filter>
+          </defs>
+        </svg>
+      )}
+      <div
+        ref={innerRef}
+        key={powerAnim ? `pwr-${powerKey}` : "static"}
+        className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${powerAnim ? "crt-power-on" : ""}`}
+      >
         <header className="border border-[var(--phosphor)] p-3 mb-4">
           <div className="crt-text text-[var(--phosphor-bright)] font-bold tracking-wider text-sm sm:text-base">
             WEB 1975 TERMINAL EMULATOR
@@ -64,6 +121,7 @@ export function TerminalShell({
       </div>
       {glassEnabled && <div className="crt-glass" aria-hidden="true" />}
       {beamEnabled && <div className="crt-scan-beam" aria-hidden="true" />}
+      {cornerHighlight && <div className="crt-corner-highlight" aria-hidden="true" />}
     </div>
   );
 }
