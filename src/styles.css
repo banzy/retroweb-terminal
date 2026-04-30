@@ -275,6 +275,7 @@
     50% { opacity: calc(1 - var(--flicker-depth, 0.03)); }
   }
   .crt-text {
+    color: var(--phosphor);
     text-shadow: var(--text-glow);
   }
   .crt-cursor::after {
