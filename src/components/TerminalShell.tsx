@@ -1,5 +1,4 @@
 import type { CSSProperties, ReactNode } from "react";
-import { BANNER_WEB1975 } from "@/lib/asciiBanners";
 
 type Props = {
   children: ReactNode;
@@ -38,10 +37,7 @@ export function TerminalShell({
     >
       <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10">
         <header className="border border-[var(--phosphor)] p-3 mb-4">
-          <pre className="ascii-pre crt-text text-[var(--phosphor-bright)] text-[10px] sm:text-xs leading-tight overflow-x-auto">
-{BANNER_WEB1975}
-          </pre>
-          <div className="crt-text text-[var(--phosphor-bright)] font-bold tracking-wider text-sm sm:text-base mt-2">
+          <div className="crt-text text-[var(--phosphor-bright)] font-bold tracking-wider text-sm sm:text-base">
             WEB 1975 TERMINAL EMULATOR
           </div>
           <div className="crt-text text-[var(--phosphor-dim)] text-xs mt-1">
