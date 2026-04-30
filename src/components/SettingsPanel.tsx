@@ -20,6 +20,22 @@ type Props = {
   setBgTint: (n: number) => void;
   bgRadial: boolean;
   setBgRadial: (b: boolean) => void;
+  curvature: boolean;
+  setCurvature: (b: boolean) => void;
+  rgbSplit: number;
+  setRgbSplit: (n: number) => void;
+  bloom: boolean;
+  setBloom: (b: boolean) => void;
+  trackingGlitch: boolean;
+  setTrackingGlitch: (b: boolean) => void;
+  powerAnim: boolean;
+  setPowerAnim: (b: boolean) => void;
+  burnIn: boolean;
+  setBurnIn: (b: boolean) => void;
+  densityFlicker: boolean;
+  setDensityFlicker: (b: boolean) => void;
+  cornerHighlight: boolean;
+  setCornerHighlight: (b: boolean) => void;
 };
 
 export function SettingsPanel({
@@ -41,8 +57,25 @@ export function SettingsPanel({
   setBgTint,
   bgRadial,
   setBgRadial,
+  curvature,
+  setCurvature,
+  rgbSplit,
+  setRgbSplit,
+  bloom,
+  setBloom,
+  trackingGlitch,
+  setTrackingGlitch,
+  powerAnim,
+  setPowerAnim,
+  burnIn,
+  setBurnIn,
+  densityFlicker,
+  setDensityFlicker,
+  cornerHighlight,
+  setCornerHighlight,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const [advOpen, setAdvOpen] = useState(false);
   const isCustom = theme.id === "custom";
 
   function updateCustom(field: "bg" | "phosphor" | "bright" | "dim", value: string) {
@@ -234,9 +267,68 @@ export function SettingsPanel({
               <option value={120}>120</option>
             </select>
           </div>
+
+          {/* Advanced */}
+          <div className="border-t border-[var(--phosphor-dim)] pt-3">
+            <button
+              type="button"
+              onClick={() => setAdvOpen((v) => !v)}
+              className="text-[var(--phosphor)] hover:text-[var(--phosphor-bright)] font-mono"
+            >
+              [{advOpen ? "-" : "+"}] ADVANCED CRT EFFECTS
+            </button>
+            {advOpen && (
+              <div className="mt-3 space-y-2">
+                <ToggleRow label="SCREEN_CURVATURE" checked={curvature} onChange={setCurvature} />
+                <label className="flex items-center gap-2">
+                  <span className="w-40">RGB_SPLIT=</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={Math.round(rgbSplit * 100)}
+                    onChange={(e) => setRgbSplit(parseInt(e.target.value, 10) / 100)}
+                    className="flex-1 accent-[var(--phosphor)]"
+                  />
+                  <span className="w-10 text-right text-[var(--phosphor)]">
+                    {rgbSplit <= 0 ? "OFF" : `${Math.round(rgbSplit * 100)}%`}
+                  </span>
+                </label>
+                <ToggleRow label="BLOOM_HALATION" checked={bloom} onChange={setBloom} />
+                <ToggleRow label="TRACKING_GLITCH" checked={trackingGlitch} onChange={setTrackingGlitch} />
+                <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
+                <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
+                <ToggleRow label="DENSITY_FLICKER" checked={densityFlicker} onChange={setDensityFlicker} />
+                <ToggleRow label="CORNER_HIGHLIGHT" checked={cornerHighlight} onChange={setCornerHighlight} />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+function ToggleRow({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (b: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="accent-[var(--phosphor)]"
+      />
+      <span className="w-40">{label}</span>
+      <span className="text-[var(--phosphor)]">{checked ? "ON" : "OFF"}</span>
+    </label>
   );
 }
 
