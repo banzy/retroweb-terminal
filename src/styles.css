@@ -186,6 +186,51 @@
     z-index: 51;
     animation: flicker var(--flicker-duration, 0.15s) infinite;
   }
+  /* Rolling scan beam — bright horizontal band sweeping top to bottom */
+  .crt-scan-beam {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 53;
+    overflow: hidden;
+    mix-blend-mode: screen;
+    opacity: var(--scan-beam-opacity, 0.6);
+  }
+  .crt-scan-beam::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -20vh;
+    height: 22vh;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in oklab, var(--phosphor) 25%, transparent) 45%,
+      color-mix(in oklab, var(--phosphor) 55%, transparent) 50%,
+      color-mix(in oklab, var(--phosphor) 25%, transparent) 55%,
+      transparent 100%
+    );
+    filter: blur(1px);
+    animation: scan-roll var(--scan-beam-duration, 6s) linear infinite;
+  }
+  /* Secondary thinner, faster line */
+  .crt-scan-beam::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -5vh;
+    height: 2px;
+    background: color-mix(in oklab, var(--phosphor) 80%, transparent);
+    box-shadow: 0 0 8px var(--phosphor), 0 0 18px color-mix(in oklab, var(--phosphor) 60%, transparent);
+    animation: scan-roll calc(var(--scan-beam-duration, 6s) * 0.55) linear infinite;
+    animation-delay: -1.2s;
+  }
+  @keyframes scan-roll {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(120vh); }
+  }
   /* CRT glass reflection — curved surface with twin highlight bands,
      a soft drifting glare, and darkened edges. */
   .crt-glass {
