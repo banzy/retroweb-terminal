@@ -19,7 +19,7 @@ export function UrlCommandInput({ onSubmit, loading }: Props) {
 
   return (
     <form onSubmit={handle} className="w-full">
-      <div className="flex flex-col sm:flex-row items-stretch gap-2 border border-[var(--phosphor)] p-3 bg-[var(--crt-bg)]">
+      <div className="flex flex-col sm:flex-row items-stretch gap-2 border border-[var(--phosphor)] p-3">
         <label className="crt-text text-[var(--phosphor)] text-sm whitespace-nowrap self-center">
           {"> LOAD WEBSITE:"}
         </label>
