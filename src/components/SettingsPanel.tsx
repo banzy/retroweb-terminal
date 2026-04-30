@@ -209,34 +209,6 @@ export function SettingsPanel({
             <div className="mb-2 text-[var(--phosphor)]">&gt; CRT EFFECTS:</div>
             <div className="space-y-2">
               <label className="flex items-center gap-2">
-                <span className="w-24">FLICKER=</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={Math.round(flickerSpeed * 100)}
-                  onChange={(e) => setFlickerSpeed(parseInt(e.target.value, 10) / 100)}
-                  className="flex-1 accent-[var(--phosphor)]"
-                />
-                <span className="w-10 text-right text-[var(--phosphor)]">
-                  {flickerSpeed <= 0 ? "OFF" : `${Math.round(flickerSpeed * 100)}%`}
-                </span>
-              </label>
-              <label className="flex items-center gap-2">
-                <span className="w-24">SCAN_BEAM=</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={Math.round(scanBeamSpeed * 100)}
-                  onChange={(e) => setScanBeamSpeed(parseInt(e.target.value, 10) / 100)}
-                  className="flex-1 accent-[var(--phosphor)]"
-                />
-                <span className="w-10 text-right text-[var(--phosphor)]">
-                  {scanBeamSpeed <= 0 ? "OFF" : `${Math.round(scanBeamSpeed * 100)}%`}
-                </span>
-              </label>
-              <label className="flex items-center gap-2">
                 <span className="w-24">BG_TINT=</span>
                 <input
                   type="range"
@@ -288,6 +260,34 @@ export function SettingsPanel({
             </button>
             {advOpen && (
               <div className="mt-3 space-y-2">
+                <label className="flex items-center gap-2">
+                  <span className="w-40">FLICKER=</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={Math.round(flickerSpeed * 100)}
+                    onChange={(e) => setFlickerSpeed(parseInt(e.target.value, 10) / 100)}
+                    className="flex-1 accent-[var(--phosphor)]"
+                  />
+                  <span className="w-10 text-right text-[var(--phosphor)]">
+                    {flickerSpeed <= 0 ? "OFF" : `${Math.round(flickerSpeed * 100)}%`}
+                  </span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <span className="w-40">SCAN_BEAM=</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={Math.round(scanBeamSpeed * 100)}
+                    onChange={(e) => setScanBeamSpeed(parseInt(e.target.value, 10) / 100)}
+                    className="flex-1 accent-[var(--phosphor)]"
+                  />
+                  <span className="w-10 text-right text-[var(--phosphor)]">
+                    {scanBeamSpeed <= 0 ? "OFF" : `${Math.round(scanBeamSpeed * 100)}%`}
+                  </span>
+                </label>
                 <ToggleRow label="SCREEN_CURVATURE" checked={curvature} onChange={setCurvature} />
                 <label className="flex items-center gap-2">
                   <span className="w-40">RGB_SPLIT=</span>
@@ -307,6 +307,13 @@ export function SettingsPanel({
                 <ToggleRow label="TRACKING_GLITCH" checked={trackingGlitch} onChange={setTrackingGlitch} />
                 <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
                 <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
+                <div className="border-t border-[var(--phosphor-dim)] pt-2 mt-2">
+                  <div className="mb-2 text-[var(--phosphor)]">&gt; SOUND:</div>
+                  <ToggleRow label="KEYBOARD_CLACK" checked={sndKeyboard} onChange={setSndKeyboard} />
+                  <ToggleRow label="MODEM_HANDSHAKE" checked={sndModem} onChange={setSndModem} />
+                  <ToggleRow label="ERROR_BEEP" checked={sndError} onChange={setSndError} />
+                  <ToggleRow label="TOGGLE_CLICK" checked={sndToggle} onChange={setSndToggle} />
+                </div>
               </div>
             )}
           </div>
@@ -330,7 +337,10 @@ function ToggleRow({
       <input
         type="checkbox"
         checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        onChange={(e) => {
+          playToggleClick();
+          onChange(e.target.checked);
+        }}
         className="accent-[var(--phosphor)]"
       />
       <span className="w-40">{label}</span>
