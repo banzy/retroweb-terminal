@@ -48,8 +48,9 @@ export function TerminalShell({
     bgTint * 100,
   )}%, #000000)`;
 
-  // Power-on plays only on first mount when enabled.
-  const [powerKey] = useState(() => Date.now());
+  // Power-on plays only once on initial page load when enabled.
+  // Capture the toggle value at mount; later toggles won't replay it.
+  const [powerOnAtMount] = useState(powerAnim);
 
   const classes = [
     "crt-screen min-h-screen w-full",
@@ -88,8 +89,7 @@ export function TerminalShell({
         </svg>
       )}
       <div
-        key={powerAnim ? `pwr-${powerKey}` : "static"}
-        className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${powerAnim ? "crt-power-on" : ""}`}
+        className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${powerOnAtMount ? "crt-power-on" : ""}`}
       >
         <header className="border border-[var(--phosphor)] p-3 mb-4">
           <div className="crt-text text-[var(--phosphor-bright)] font-bold tracking-wider text-sm sm:text-base">
