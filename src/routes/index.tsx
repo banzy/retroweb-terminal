@@ -61,18 +61,23 @@ function Index() {
   const [booting, setBooting] = useState(bootSeq);
   const [rebootKey, setRebootKey] = useState(0);
   const [forcePowerOn, setForcePowerOn] = useState(false);
+  const [collapsing, setCollapsing] = useState(false);
 
   useEffect(() => {
     function onReboot() {
       const y = window.scrollY;
-      setForcePowerOn(true);
-      setBooting(bootSeq);
-      setRebootKey((k) => k + 1);
-      // Restore scroll after the remount paints
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: y, left: 0, behavior: "auto" });
-        requestAnimationFrame(() => window.scrollTo({ top: y, left: 0, behavior: "auto" }));
-      });
+      // Play collapse-to-middle first, then remount with power-on + boot.
+      setCollapsing(true);
+      window.setTimeout(() => {
+        setCollapsing(false);
+        setForcePowerOn(true);
+        setBooting(bootSeq);
+        setRebootKey((k) => k + 1);
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: y, left: 0, behavior: "auto" });
+          requestAnimationFrame(() => window.scrollTo({ top: y, left: 0, behavior: "auto" }));
+        });
+      }, 500);
     }
     window.addEventListener("w1975:reboot", onReboot);
     return () => window.removeEventListener("w1975:reboot", onReboot);
@@ -145,6 +150,7 @@ function Index() {
       powerAnim={powerAnim || forcePowerOn}
       burnIn={burnIn}
       cabinet={cabinet}
+      collapsing={collapsing}
     >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
