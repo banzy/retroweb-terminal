@@ -39,6 +39,15 @@ function Index() {
   const [scanBeamSpeed, setScanBeamSpeed] = useLocalStorageState<number>("w1975.scanBeamSpeed", 0.4);
   const [bgTint, setBgTint] = useLocalStorageState<number>("w1975.bgTint", 0);
   const [bgRadial, setBgRadial] = useLocalStorageState<boolean>("w1975.bgRadial", true);
+  // Advanced
+  const [curvature, setCurvature] = useLocalStorageState<boolean>("w1975.curvature", false);
+  const [rgbSplit, setRgbSplit] = useLocalStorageState<number>("w1975.rgbSplit", 0);
+  const [bloom, setBloom] = useLocalStorageState<boolean>("w1975.bloom", false);
+  const [trackingGlitch, setTrackingGlitch] = useLocalStorageState<boolean>("w1975.trackingGlitch", false);
+  const [powerAnim, setPowerAnim] = useLocalStorageState<boolean>("w1975.powerAnim", false);
+  const [burnIn, setBurnIn] = useLocalStorageState<boolean>("w1975.burnIn", false);
+  const [densityFlicker, setDensityFlicker] = useLocalStorageState<boolean>("w1975.densityFlicker", false);
+  const [cornerHighlight, setCornerHighlight] = useLocalStorageState<boolean>("w1975.cornerHighlight", false);
 
   async function handleSubmit(url: string) {
     setLoading(true);
@@ -72,6 +81,14 @@ function Index() {
       scanBeamSpeed={scanBeamSpeed}
       bgTint={bgTint}
       bgRadial={bgRadial}
+      curvature={curvature}
+      rgbSplit={rgbSplit}
+      bloom={bloom}
+      trackingGlitch={trackingGlitch}
+      powerAnim={powerAnim}
+      burnIn={burnIn}
+      densityFlicker={densityFlicker}
+      cornerHighlight={cornerHighlight}
     >
       <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
       <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
@@ -94,6 +111,22 @@ function Index() {
         setBgTint={setBgTint}
         bgRadial={bgRadial}
         setBgRadial={setBgRadial}
+        curvature={curvature}
+        setCurvature={setCurvature}
+        rgbSplit={rgbSplit}
+        setRgbSplit={setRgbSplit}
+        bloom={bloom}
+        setBloom={setBloom}
+        trackingGlitch={trackingGlitch}
+        setTrackingGlitch={setTrackingGlitch}
+        powerAnim={powerAnim}
+        setPowerAnim={setPowerAnim}
+        burnIn={burnIn}
+        setBurnIn={setBurnIn}
+        densityFlicker={densityFlicker}
+        setDensityFlicker={setDensityFlicker}
+        cornerHighlight={cornerHighlight}
+        setCornerHighlight={setCornerHighlight}
       />
 
       {loading && <LoadingSequence />}
