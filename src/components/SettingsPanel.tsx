@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PRESET_THEMES, type CrtTheme } from "@/lib/crtThemes";
+import { playToggleClick } from "@/lib/crtSounds";
 
 type Props = {
   asciiWidth: number;
@@ -32,6 +33,14 @@ type Props = {
   setPowerAnim: (b: boolean) => void;
   burnIn: boolean;
   setBurnIn: (b: boolean) => void;
+  sndKeyboard: boolean;
+  setSndKeyboard: (b: boolean) => void;
+  sndModem: boolean;
+  setSndModem: (b: boolean) => void;
+  sndError: boolean;
+  setSndError: (b: boolean) => void;
+  sndToggle: boolean;
+  setSndToggle: (b: boolean) => void;
 };
 
 export function SettingsPanel({
@@ -65,6 +74,14 @@ export function SettingsPanel({
   setPowerAnim,
   burnIn,
   setBurnIn,
+  sndKeyboard,
+  setSndKeyboard,
+  sndModem,
+  setSndModem,
+  sndError,
+  setSndError,
+  sndToggle,
+  setSndToggle,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [advOpen, setAdvOpen] = useState(false);
