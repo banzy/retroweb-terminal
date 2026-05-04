@@ -15,9 +15,135 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=IBM+Plex+Mono:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&family=Courier+Prime:wght@400;700&family=Cutive+Mono&family=Nova+Mono&family=Azeret+Mono:wght@400;500;700&display=swap"
     />
+    <style>
+      :root {
+        --startup-bg: #050b06;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--startup-bg);
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+
+      .startup-shell {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: stretch;
+        justify-content: center;
+        padding: clamp(16px, 4vw, 56px);
+        box-sizing: border-box;
+        background: var(--startup-cabinet-bg, transparent);
+      }
+
+      .startup-shell[data-cabinet="none"] {
+        padding: 0;
+        background: transparent;
+      }
+
+      .startup-shell[data-cabinet]:not([data-cabinet="none"]) {
+        display: flex;
+      }
+
+      .startup-shell__screen {
+        flex: 1;
+        border-radius: 18px;
+        overflow: hidden;
+        position: relative;
+        box-shadow:
+          inset 0 0 60px rgba(0, 0, 0, 0.7),
+          0 20px 60px rgba(0, 0, 0, 0.5);
+        border: var(--startup-screen-border, 0 solid transparent);
+        background: var(--startup-bg);
+      }
+
+      .startup-warning {
+        display: none;
+        position: absolute;
+        inset: 0;
+        padding: 24px;
+        color: #33ff66;
+        font: 16px/1.4 "IBM Plex Mono", "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .startup-shell[data-mode="file"] {
+        display: flex;
+      }
+
+      .startup-shell[data-mode="file"] .startup-warning {
+        display: block;
+      }
+
+      .startup-shell[data-cabinet="vt100"] {
+        --startup-cabinet-bg: linear-gradient(180deg, #d6c9a8 0%, #b8a982 100%);
+        --startup-screen-border: 18px solid #2a2620;
+      }
+
+      .startup-shell[data-cabinet="pet2001"] {
+        --startup-cabinet-bg: linear-gradient(180deg, #c9c9c4 0%, #8e8e88 100%);
+        --startup-screen-border: 22px solid #1a1a1a;
+      }
+
+      .startup-shell[data-cabinet="apple3"] {
+        --startup-cabinet-bg: linear-gradient(180deg, #ece6d6 0%, #c8c1ad 100%);
+        --startup-screen-border: 16px solid #3a3a3a;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          var raw = window.localStorage.getItem("w1975.cabinet");
+          var cabinet = raw ? JSON.parse(raw) : "none";
+          var root = document.documentElement;
+          root.style.setProperty("--startup-cabinet", cabinet || "none");
+          if (cabinet && cabinet !== "none") {
+            root.style.setProperty("--startup-bg", "#050b06");
+          }
+        } catch {}
+      })();
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div
+        class="startup-shell"
+        data-cabinet="none"
+        data-mode="app"
+        aria-hidden="true"
+      >
+        <div class="startup-shell__screen">
+          <div class="startup-warning">SOURCE MODE REQUIRES HTTP SERVER
+
+OPEN:
+  http://127.0.0.1:4173/
+
+THE file:// PAGE DOES NOT RUN THE VITE APP
+AND DOES NOT SHARE THE SAME SAVED CABINET STATE.</div>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        try {
+          var raw = window.localStorage.getItem("w1975.cabinet");
+          var cabinet = raw ? JSON.parse(raw) : "none";
+          var shell = document.querySelector(".startup-shell");
+          if (shell && typeof cabinet === "string") {
+            shell.setAttribute("data-cabinet", cabinet);
+          }
+          if (shell && window.location.protocol === "file:") {
+            shell.setAttribute("data-mode", "file");
+          }
+        } catch {}
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

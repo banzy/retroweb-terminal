@@ -55,7 +55,7 @@ export function AsciiImage({ src, width = 80 }: Props) {
   const fontPx = Math.max(4, Math.min(20, Math.round(960 / width)));
   return (
     <pre
-      className="ascii-pre crt-text text-[var(--phosphor)] leading-[1] overflow-x-auto"
+      className="ascii-pre crt-text text-[var(--phosphor)] leading-[1] overflow-hidden"
       style={{ fontSize: `${fontPx}px`, lineHeight: 1 }}
     >
       {ascii}

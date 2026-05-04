@@ -1,20 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * useState that persists to localStorage. SSR-safe: reads the stored value
- * lazily inside an effect on the client, so hydration matches the server.
+ * useState that persists to localStorage. Reads synchronously on the client
+ * so the first paint can use stored visual preferences like the cabinet frame.
  */
 export function useLocalStorageState<T>(key: string, initial: T) {
-  const [value, setValue] = useState<T>(initial);
-  const hydrated = useRef(false);
-
-  // Read stored value once on the client.
-  useEffect(() => {
+  const hydrated = useRef(typeof window !== "undefined");
+  const [value, setValue] = useState<T>(() => {
+    if (typeof window === "undefined") return initial;
     try {
-      const raw = localStorage.getItem(key);
-      if (raw !== null) setValue(JSON.parse(raw) as T);
+      const raw = window.localStorage.getItem(key);
+      return raw !== null ? (JSON.parse(raw) as T) : initial;
     } catch {
-      /* ignore corrupt values */
+      return initial;
+    }
+  });
+
+  // Re-read if the storage key itself changes.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(key);
+      setValue(raw !== null ? (JSON.parse(raw) as T) : initial);
+    } catch {
+      setValue(initial);
     }
     hydrated.current = true;
   }, [key]);
@@ -23,7 +32,7 @@ export function useLocalStorageState<T>(key: string, initial: T) {
   useEffect(() => {
     if (!hydrated.current) return;
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      window.localStorage.setItem(key, JSON.stringify(value));
     } catch {
       /* quota / private mode — ignore */
     }

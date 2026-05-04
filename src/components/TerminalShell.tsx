@@ -49,7 +49,7 @@ export function TerminalShell({
   const [powerOnAtMount] = useState(powerAnim);
 
   const classes = [
-    "crt-screen min-h-screen w-full",
+    "crt-screen min-h-screen w-full relative",
     bgRadial ? "" : "crt-flat",
     curvature ? "crt-curve" : "",
     rgbSplit > 0 ? "crt-rgb-split" : "",
