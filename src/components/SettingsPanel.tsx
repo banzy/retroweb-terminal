@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PRESET_THEMES, CABINETS, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import type { CrtFont, FontId } from "@/lib/crtFonts";
-import { playToggleClick } from "@/lib/crtSounds";
+import { playToggleClick, type SoundLoudness } from "@/lib/crtSounds";
 
 type Props = {
   asciiWidth: number;
@@ -38,6 +38,8 @@ type Props = {
   setSndError: (b: boolean) => void;
   sndToggle: boolean;
   setSndToggle: (b: boolean) => void;
+  soundLoudness: SoundLoudness;
+  setSoundLoudness: (v: SoundLoudness) => void;
   cabinet: CabinetId;
   setCabinet: (c: CabinetId) => void;
   savedThemes: CrtTheme[];
@@ -84,6 +86,8 @@ export function SettingsPanel({
   setSndError,
   sndToggle,
   setSndToggle,
+  soundLoudness,
+  setSoundLoudness,
   cabinet,
   setCabinet,
   savedThemes,
@@ -119,7 +123,14 @@ export function SettingsPanel({
     const id = `saved-${Date.now()}`;
     setSavedThemes([
       ...savedThemes,
-      { id, label: name.toUpperCase(), bg: theme.bg, phosphor: theme.phosphor, bright: theme.bright, dim: theme.dim },
+      {
+        id,
+        label: name.toUpperCase(),
+        bg: theme.bg,
+        phosphor: theme.phosphor,
+        bright: theme.bright,
+        dim: theme.dim,
+      },
     ]);
     setSaveName("");
   }
@@ -137,8 +148,8 @@ export function SettingsPanel({
       >
         <span>[{open ? "-" : "+"}] CONFIG :: TERMINAL SETTINGS</span>
         <span className="text-[var(--phosphor-dim)] hidden sm:inline">
-          THEME={theme.label} | GLASS={glassEnabled ? "ON" : "OFF"} |
-          SCAN={Math.round(scanlineIntensity * 100)}%
+          THEME={theme.label} | GLASS={glassEnabled ? "ON" : "OFF"} | SCAN=
+          {Math.round(scanlineIntensity * 100)}%
         </span>
       </button>
 
@@ -200,10 +211,26 @@ export function SettingsPanel({
                   <div>
                     <div className="mb-1 text-[var(--phosphor)]">&gt; CUSTOM COLORS:</div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      <ColorField label="BG" value={theme.bg} onChange={(v) => updateCustom("bg", v)} />
-                      <ColorField label="TEXT" value={theme.phosphor} onChange={(v) => updateCustom("phosphor", v)} />
-                      <ColorField label="BRIGHT" value={theme.bright} onChange={(v) => updateCustom("bright", v)} />
-                      <ColorField label="DIM" value={theme.dim} onChange={(v) => updateCustom("dim", v)} />
+                      <ColorField
+                        label="BG"
+                        value={theme.bg}
+                        onChange={(v) => updateCustom("bg", v)}
+                      />
+                      <ColorField
+                        label="TEXT"
+                        value={theme.phosphor}
+                        onChange={(v) => updateCustom("phosphor", v)}
+                      />
+                      <ColorField
+                        label="BRIGHT"
+                        value={theme.bright}
+                        onChange={(v) => updateCustom("bright", v)}
+                      />
+                      <ColorField
+                        label="DIM"
+                        value={theme.dim}
+                        onChange={(v) => updateCustom("dim", v)}
+                      />
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       <input
@@ -241,11 +268,7 @@ export function SettingsPanel({
                               textShadow: `0 0 4px ${p.phosphor}`,
                             }}
                           >
-                            <button
-                              type="button"
-                              onClick={() => setTheme(p)}
-                              className="px-2 py-1"
-                            >
+                            <button type="button" onClick={() => setTheme(p)} className="px-2 py-1">
                               {active ? "[*]" : "[ ]"} {p.label}
                             </button>
                             <button
@@ -432,12 +455,36 @@ export function SettingsPanel({
                   </span>
                 </label>
                 <ToggleRow label="BLOOM_HALATION" checked={bloom} onChange={setBloom} />
-                <ToggleRow label="TRACKING_GLITCH" checked={trackingGlitch} onChange={setTrackingGlitch} />
+                <ToggleRow
+                  label="TRACKING_GLITCH"
+                  checked={trackingGlitch}
+                  onChange={setTrackingGlitch}
+                />
                 <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
                 <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
                 <div className="border-t border-[var(--phosphor-dim)] pt-2 mt-2">
                   <div className="mb-2 text-[var(--phosphor)]">&gt; SOUND:</div>
-                  <ToggleRow label="KEYBOARD_CLACK" checked={sndKeyboard} onChange={setSndKeyboard} />
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="w-40">LOUDNESS</span>
+                    {(["low", "med", "high"] as const).map((level) => (
+                      <button
+                        key={level}
+                        type="button"
+                        onClick={() => {
+                          setSoundLoudness(level);
+                          playToggleClick();
+                        }}
+                        className="border border-[var(--phosphor-dim)] text-[var(--phosphor)] px-2 py-1 font-mono text-xs hover:border-[var(--phosphor)]"
+                      >
+                        {soundLoudness === level ? "[*]" : "[ ]"} {level.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                  <ToggleRow
+                    label="KEYBOARD_CLACK"
+                    checked={sndKeyboard}
+                    onChange={setSndKeyboard}
+                  />
                   <ToggleRow label="MODEM_HANDSHAKE" checked={sndModem} onChange={setSndModem} />
                   <ToggleRow label="ERROR_BEEP" checked={sndError} onChange={setSndError} />
                   <ToggleRow label="TOGGLE_CLICK" checked={sndToggle} onChange={setSndToggle} />

@@ -1,7 +1,0 @@
-name = "retroweb-fetch-proxy"
-main = "worker.js"
-compatibility_date = "2025-01-01"
-
-# After deploy, attach a route in Cloudflare dashboard (your zone), e.g.:
-# generativeworks.net/retroweb/fetch-proxy*
-# Then set VITE_FETCH_PROXY=/retroweb/fetch-proxy at build time (see worker.js header).

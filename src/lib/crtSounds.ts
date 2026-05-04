@@ -8,8 +8,17 @@ type SoundFlags = {
   toggleClick: boolean;
 };
 
+export type SoundLoudness = "low" | "med" | "high";
+
+const LOUDNESS_GAIN: Record<SoundLoudness, number> = {
+  low: 0.18,
+  med: 0.35,
+  high: 0.65,
+};
+
 let ctx: AudioContext | null = null;
 let masterGain: GainNode | null = null;
+let loudness: SoundLoudness = "med";
 let flags: SoundFlags = {
   keyboard: false,
   modem: false,
@@ -26,7 +35,7 @@ function getCtx(): AudioContext | null {
     if (!Ctor) return null;
     ctx = new Ctor();
     masterGain = ctx.createGain();
-    masterGain.gain.value = 0.35;
+    masterGain.gain.value = LOUDNESS_GAIN[loudness];
     masterGain.connect(ctx.destination);
   }
   if (ctx.state === "suspended") void ctx.resume();
@@ -39,6 +48,15 @@ export function setSoundFlags(next: Partial<SoundFlags>) {
 
 export function getSoundFlags(): SoundFlags {
   return flags;
+}
+
+export function setSoundLoudness(next: SoundLoudness) {
+  loudness = next;
+  if (masterGain) masterGain.gain.value = LOUDNESS_GAIN[next];
+}
+
+export function getSoundLoudness(): SoundLoudness {
+  return loudness;
 }
 
 // ---------- KEYBOARD CLACK ----------
@@ -140,11 +158,11 @@ export function playModemHandshake(): () => void {
 
   // Sequence of pure tones (DTMF-ish dial then carrier squawk)
   const tones: Array<[number, number, number]> = [
-    [now + 0.00, 0.18, 1209],
-    [now + 0.20, 0.18, 1336],
-    [now + 0.40, 0.18, 1477],
-    [now + 0.65, 0.30, 2100], // answer tone
-    [now + 1.00, 0.45, 1100], // calling tone
+    [now + 0.0, 0.18, 1209],
+    [now + 0.2, 0.18, 1336],
+    [now + 0.4, 0.18, 1477],
+    [now + 0.65, 0.3, 2100], // answer tone
+    [now + 1.0, 0.45, 1100], // calling tone
   ];
   tones.forEach(([t, dur, freq]) => {
     const osc = ac.createOscillator();
@@ -159,7 +177,11 @@ export function playModemHandshake(): () => void {
     osc.start(t);
     osc.stop(t + dur + 0.02);
     stops.push(() => {
-      try { osc.stop(); } catch { /* ignore */ }
+      try {
+        osc.stop();
+      } catch {
+        /* ignore */
+      }
     });
   });
 
@@ -186,7 +208,12 @@ export function playModemHandshake(): () => void {
   o1.stop(warbleEnd + 0.05);
   lfo.stop(warbleEnd + 0.05);
   stops.push(() => {
-    try { o1.stop(); lfo.stop(); } catch { /* ignore */ }
+    try {
+      o1.stop();
+      lfo.stop();
+    } catch {
+      /* ignore */
+    }
   });
 
   // Hiss / carrier noise
@@ -211,7 +238,11 @@ export function playModemHandshake(): () => void {
   noise.start(hissStart);
   noise.stop(hissEnd + 0.05);
   stops.push(() => {
-    try { noise.stop(); } catch { /* ignore */ }
+    try {
+      noise.stop();
+    } catch {
+      /* ignore */
+    }
   });
 
   const totalMs = (hissEnd - now + 0.1) * 1000;

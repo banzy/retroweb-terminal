@@ -1,13 +1,15 @@
 import { parseWebsiteHtml, type ParsedWebsite } from "@/lib/parseWebsiteHtml";
 
 const BROWSER_HEADERS: Record<string, string> = {
-  Accept:
-    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
   "Accept-Language": "en-US,en;q=0.9",
 };
 
-/** Public CORS proxy fallback for static frontend deploys. */
-const PUBLIC_RAW_CORS_PROXY = "https://api.allorigins.win/raw?url=";
+const DEFAULT_FETCH_API = "fetch.php";
+
+function resolveFetchApi(): string {
+  return import.meta.env.VITE_FETCH_API?.trim() || DEFAULT_FETCH_API;
+}
 
 function explainStatus(status: number): string {
   if (status === 403)
@@ -25,107 +27,67 @@ function validateHttpUrl(raw: string): string {
   return u.toString();
 }
 
-/** Browsers cannot read cross-origin HTML/images (CORS). Only same-origin URLs are worth fetching directly. */
-function isSameOriginAsApp(target: string): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return new URL(target).origin === window.location.origin;
-  } catch {
-    return false;
+function resolveApiUrl(api: string): URL {
+  if (typeof window === "undefined") return new URL(api, "http://localhost/");
+  const appBase = new URL(import.meta.env.BASE_URL || "/", window.location.origin);
+  return new URL(api, appBase);
+}
+
+function buildApiRequestUrl(api: string, target: string): string {
+  const u = resolveApiUrl(api);
+  u.searchParams.set("url", target);
+  return u.toString();
+}
+
+function assertApiUsable(api: string): void {
+  if (typeof window === "undefined") return;
+  const resolved = resolveApiUrl(api);
+  if (window.location.protocol === "https:" && resolved.protocol === "http:") {
+    throw new Error("FETCH API BLOCKED :: HTTPS FRONTEND CANNOT CALL AN HTTP BACKEND.");
   }
 }
 
-function isLikelyCorsOrNetworkFailure(e: unknown): boolean {
-  if (e instanceof TypeError) return true;
-  if (e instanceof Error && /failed to fetch|networkerror|load failed/i.test(e.message)) return true;
-  return false;
-}
-
-async function fetchTextViaPublicProxy(target: string): Promise<string> {
-  const res = await fetch(PUBLIC_RAW_CORS_PROXY + encodeURIComponent(target), {
+async function fetchTextViaApi(api: string, target: string): Promise<string> {
+  assertApiUsable(api);
+  const res = await fetch(buildApiRequestUrl(api, target), {
     headers: BROWSER_HEADERS,
   });
   if (!res.ok) throw new Error(explainStatus(res.status));
   return res.text();
 }
 
-async function fetchBufferViaPublicProxy(target: string): Promise<ArrayBuffer> {
-  const res = await fetch(PUBLIC_RAW_CORS_PROXY + encodeURIComponent(target), {
-    headers: BROWSER_HEADERS,
-  });
+async function fetchBufferViaApi(
+  api: string,
+  target: string,
+): Promise<{ buf: ArrayBuffer; contentType: string }> {
+  assertApiUsable(api);
+  const res = await fetch(buildApiRequestUrl(api, target));
   if (!res.ok) throw new Error(explainStatus(res.status));
-  return res.arrayBuffer();
-}
-
-function proxyRequiredMessage(): Error {
-  return new Error(
-    "FETCH BLOCKED :: A PASSIVE FRONTEND CANNOT READ ARBITRARY SITES DIRECTLY. " +
-      "ALLOW THE PUBLIC RELAY https://api.allorigins.win " +
-      "OR USE TARGET SITES THAT ALREADY SEND PERMISSIVE CORS HEADERS.",
-  );
+  return {
+    buf: await res.arrayBuffer(),
+    contentType: res.headers.get("content-type") || "image/jpeg",
+  };
 }
 
 /**
- * Fetches remote HTML. Cross-origin pages require a proxy (browser CORS).
- * Static hosting uses direct same-origin fetches or the public relay fallback.
+ * Fetches remote HTML through the same-origin PHP API.
+ * Browsers cannot read arbitrary cross-origin pages directly because of CORS.
  */
 export async function fetchWebsiteContent(url: string): Promise<ParsedWebsite> {
   const target = validateHttpUrl(url);
-
-  let html: string;
-
-  if (isSameOriginAsApp(target)) {
-    const res = await fetch(target, { headers: BROWSER_HEADERS, redirect: "follow" });
-    if (!res.ok) throw new Error(explainStatus(res.status));
-    html = await res.text();
-  } else {
-    try {
-      html = await fetchTextViaPublicProxy(target);
-    } catch (e) {
-      if (isLikelyCorsOrNetworkFailure(e)) throw proxyRequiredMessage();
-      throw e;
-    }
-  }
-
+  const html = await fetchTextViaApi(resolveFetchApi(), target);
   return parseWebsiteHtml(html, target);
 }
 
 export async function fetchImageAsDataUrl(
   url: string,
 ): Promise<
-  { dataUrl: string; contentType: string; error?: undefined } | { dataUrl: null; contentType: null; error: string }
+  | { dataUrl: string; contentType: string; error?: undefined }
+  | { dataUrl: null; contentType: null; error: string }
 > {
   try {
     const target = validateHttpUrl(url);
-
-    let buf: ArrayBuffer;
-    let contentType: string;
-
-    if (isSameOriginAsApp(target)) {
-      const res = await fetch(target, { redirect: "follow" });
-      if (!res.ok) {
-        const reason =
-          res.status === 429
-            ? "RATE LIMITED BY HOST"
-            : res.status === 403
-              ? "HOST REFUSED IMAGE"
-              : `HTTP ${res.status}`;
-        return { dataUrl: null, contentType: null, error: reason };
-      }
-      contentType = res.headers.get("content-type") || "image/jpeg";
-      buf = await res.arrayBuffer();
-    } else {
-      try {
-        buf = await fetchBufferViaPublicProxy(target);
-        contentType = "image/jpeg";
-      } catch (e) {
-        if (isLikelyCorsOrNetworkFailure(e)) {
-          return { dataUrl: null, contentType: null, error: proxyRequiredMessage().message };
-        }
-        const msg = e instanceof Error ? e.message : "UNKNOWN";
-        return { dataUrl: null, contentType: null, error: `NETWORK :: ${msg}` };
-      }
-    }
+    const { buf, contentType } = await fetchBufferViaApi(resolveFetchApi(), target);
 
     if (buf.byteLength > 3_500_000) {
       return { dataUrl: null, contentType: null, error: "IMAGE TOO LARGE" };
