@@ -236,7 +236,7 @@ function Index() {
         {loading && <LoadingSequence />}
 
         {error && !loading && (
-          <pre className="ascii-pre crt-text text-[var(--destructive)] text-sm border border-[var(--destructive)] p-3 mt-4">
+          <pre className="ascii-pre crt-text text-[var(--destructive)] text-sm border border-current p-3 mt-4">
             {`!! TRANSMISSION FAILURE !!\n!! ${error} !!`}
           </pre>
         )}

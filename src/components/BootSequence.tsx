@@ -81,7 +81,7 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
 
   return (
     <div
-      className="absolute inset-0 z-[50] overflow-hidden"
+      className="fixed inset-0 z-[50] overflow-hidden"
       style={{ background: "var(--effective-bg, var(--crt-bg))" }}
     >
       <div className="max-w-5xl mx-auto px-4 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre">

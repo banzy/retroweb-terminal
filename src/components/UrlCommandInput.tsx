@@ -43,15 +43,11 @@ export function UrlCommandInput({ onSubmit, loading }: Props) {
             autoCorrect="off"
             autoCapitalize="off"
           />
-          {/* Blinking block cursor — sits after typed text. Hidden while loading. */}
-          {!loading && (
+          {!loading && focused && (
             <span
               aria-hidden="true"
               className="terminal-cursor"
-              style={{
-                left: `${value.length}ch`,
-                opacity: focused || value.length === 0 ? 1 : 0.6,
-              }}
+              style={{ left: `${value.length}ch` }}
             />
           )}
           </div>
