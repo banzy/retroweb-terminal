@@ -72,7 +72,7 @@ function Index() {
     "w1975.soundLoudness",
     "min",
   );
-  const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "none");
+  const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "vt100");
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
   const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", true);
   const [fontId, setFontId] = useLocalStorageState<FontId>("w1975.fontId", "system");

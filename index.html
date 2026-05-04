@@ -82,27 +82,27 @@
       }
 
       .startup-shell[data-cabinet="vt100"] {
-        --startup-cabinet-bg: linear-gradient(180deg, #d6c9a8 0%, #b8a982 100%);
-        --startup-screen-border: 18px solid #2a2620;
+        --startup-cabinet-bg: linear-gradient(180deg, #eee0bd 0%, #cfbf95 100%);
+        --startup-screen-border: 18px solid #4a4033;
       }
 
       .startup-shell[data-cabinet="pet2001"] {
-        --startup-cabinet-bg: linear-gradient(180deg, #c9c9c4 0%, #8e8e88 100%);
-        --startup-screen-border: 22px solid #1a1a1a;
+        --startup-cabinet-bg: linear-gradient(180deg, #e5e5de 0%, #aaa99f 100%);
+        --startup-screen-border: 22px solid #343430;
       }
 
       .startup-shell[data-cabinet="apple3"] {
-        --startup-cabinet-bg: linear-gradient(180deg, #ece6d6 0%, #c8c1ad 100%);
-        --startup-screen-border: 16px solid #3a3a3a;
+        --startup-cabinet-bg: linear-gradient(180deg, #fff8e7 0%, #ded5bf 100%);
+        --startup-screen-border: 16px solid #575757;
       }
     </style>
     <script>
       (function () {
         try {
           var raw = window.localStorage.getItem("w1975.cabinet");
-          var cabinet = raw ? JSON.parse(raw) : "none";
+          var cabinet = raw ? JSON.parse(raw) : "vt100";
           var root = document.documentElement;
-          root.style.setProperty("--startup-cabinet", cabinet || "none");
+          root.style.setProperty("--startup-cabinet", cabinet || "vt100");
           if (cabinet && cabinet !== "none") {
             root.style.setProperty("--startup-bg", "#050b06");
           }
@@ -114,7 +114,7 @@
     <div id="root">
       <div
         class="startup-shell"
-        data-cabinet="none"
+        data-cabinet="vt100"
         data-mode="app"
         aria-hidden="true"
       >
@@ -133,7 +133,7 @@ AND DOES NOT SHARE THE SAME SAVED CABINET STATE.</div>
       (function () {
         try {
           var raw = window.localStorage.getItem("w1975.cabinet");
-          var cabinet = raw ? JSON.parse(raw) : "none";
+          var cabinet = raw ? JSON.parse(raw) : "vt100";
           var shell = document.querySelector(".startup-shell");
           if (shell && typeof cabinet === "string") {
             shell.setAttribute("data-cabinet", cabinet);
