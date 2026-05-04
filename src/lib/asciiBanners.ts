@@ -1,6 +1,6 @@
 // Pre-rendered ASCII art decorations for the terminal UI.
 
-export const BANNER_WEB1975 = String.raw`
+export const BANNER_WEB1977 = String.raw`
  __        __    _       _  ___ _____ ____
  \ \      / /__ | |__   / |/ _ \___  | ___|
   \ \ /\ / / _ \| '_ \  | | (_) | / /|___ \

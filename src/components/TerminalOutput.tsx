@@ -111,13 +111,13 @@ export function TerminalOutput({ data, asciiWidth }: Props) {
           </div>
         ) : (
           <pre className="ascii-pre text-[var(--phosphor-dim)] text-xs mt-2 leading-tight">
-{BANNER_NO_SIGNAL}
+            {BANNER_NO_SIGNAL}
           </pre>
         )}
       </section>
 
       <pre className="ascii-pre crt-text text-[var(--phosphor-dim)] text-[10px] sm:text-xs leading-tight">
-{ASCII_TV}
+        {ASCII_TV}
       </pre>
 
       <pre className="ascii-pre crt-text text-[var(--phosphor)] text-xs sm:text-sm">

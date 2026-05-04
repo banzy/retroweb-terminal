@@ -15,8 +15,8 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=IBM+Plex+Mono:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&family=Courier+Prime:wght@400;700&family=Cutive+Mono&family=Nova+Mono&family=Azeret+Mono:wght@400;500;700&display=swap"
     />
-    <script type="module" crossorigin src="/retroweb/assets/index-BAKFWR-Z.js"></script>
-    <link rel="stylesheet" crossorigin href="/retroweb/assets/index-C_Ilp2Xn.css">
+    <script type="module" crossorigin src="/retroweb/assets/index-_KMQKh8R.js"></script>
+    <link rel="stylesheet" crossorigin href="/retroweb/assets/index-DusEDQmG.css">
   </head>
   <body>
     <div id="root"></div>

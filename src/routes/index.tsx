@@ -90,6 +90,10 @@ function Index() {
         setCollapsing(false);
         setForcePowerOn(true);
         setBooting(bootSeq);
+        setData(null);
+        setError(null);
+        setLoading(false);
+        setStatus("READY");
         setRebootKey((k) => k + 1);
         requestAnimationFrame(() => {
           window.scrollTo({ top: y, left: 0, behavior: "auto" });
