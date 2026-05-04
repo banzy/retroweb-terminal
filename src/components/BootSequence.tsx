@@ -6,7 +6,7 @@ type Props = {
 };
 
 const LINES: Array<{ text: string; pause: number }> = [
-  { text: "WEB-1975 BIOS v0.1.7  (C) 1975 LOVABLE SYSTEMS", pause: 180 },
+  { text: "WEB-1977 BIOS v0.1.7  (C) 1977 RETROWEB SYSTEMS", pause: 180 },
   { text: "CPU: PDP-11/45 @ 1.25 MHz   FPU: NONE", pause: 120 },
   { text: "", pause: 80 },
   { text: "POST: KEYBOARD................[ OK ]", pause: 140 },
@@ -81,7 +81,7 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
 
   return (
     <div
-      className="absolute inset-0 z-[60] overflow-hidden"
+      className="absolute inset-0 z-[50] overflow-hidden"
       style={{ background: "var(--effective-bg, var(--crt-bg))" }}
     >
       <div className="max-w-5xl mx-auto px-4 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre">

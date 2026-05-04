@@ -3,6 +3,7 @@ import type { CabinetId } from "@/lib/crtThemes";
 
 type Props = {
   children: ReactNode;
+  overlay?: ReactNode;
   style?: CSSProperties;
   glassEnabled?: boolean;
   glassIntensity?: number;
@@ -22,6 +23,7 @@ type Props = {
 
 export function TerminalShell({
   children,
+  overlay,
   style,
   glassEnabled = true,
   glassIntensity = 0.35,
@@ -102,6 +104,7 @@ export function TerminalShell({
         </header>
         {children}
       </div>
+      {overlay}
       {glassEnabled && <div className="crt-glass" aria-hidden="true" />}
     </div>
   );

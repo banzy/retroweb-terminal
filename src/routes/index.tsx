@@ -70,7 +70,7 @@ function Index() {
   const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", false);
   const [soundLoudnessValue, setSoundLoudnessValue] = useLocalStorageState<SoundLoudness>(
     "w1975.soundLoudness",
-    "med",
+    "min",
   );
   const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "none");
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
@@ -170,6 +170,18 @@ function Index() {
         burnIn={burnIn}
         cabinet={cabinet}
         collapsing={collapsing}
+        overlay={
+          booting &&
+          bootSeq && (
+            <BootSequence
+              delayMs={powerAnim || forcePowerOn ? 1100 : 0}
+              onDone={() => {
+                setBooting(false);
+                setForcePowerOn(false);
+              }}
+            />
+          )
+        }
       >
         <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
         <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
@@ -247,15 +259,6 @@ EXAMPLES:
         )}
 
         <StatusLine status={status} />
-        {booting && bootSeq && (
-          <BootSequence
-            delayMs={powerAnim || forcePowerOn ? 1100 : 0}
-            onDone={() => {
-              setBooting(false);
-              setForcePowerOn(false);
-            }}
-          />
-        )}
       </TerminalShell>
     </>
   );
