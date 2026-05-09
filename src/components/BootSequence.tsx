@@ -110,11 +110,7 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
           <div key={`l-${i}`}>{l.text || "\u00a0"}</div>
         ))}
         {(phase === "ram" || phase === "tail" || phase === "hold") && (
-          <div>{`  ${ram.toString().padStart(3, " ")}K OF ${RAM_TARGET}K  [${"#"
-            .repeat(Math.round((ram / RAM_TARGET) * 16))
-            .padEnd(16, ".")}] ${Math.round((ram / RAM_TARGET) * 100)
-            .toString()
-            .padStart(3, " ")}% ${phase === "ram" ? "..." : "OK"}`}</div>
+          <div>{`  ${Math.round((ram / RAM_TARGET) * 100).toString().padStart(3, " ")}%  ${ram.toString().padStart(3, " ")}K / ${RAM_TARGET}K  ${phase === "ram" ? "..." : "[ OK ]"}`}</div>
         )}
         {(phase === "tail" || phase === "hold") &&
           TAIL.slice(0, tailIdx).map((l, i) => <div key={`t-${i}`}>{l || "\u00a0"}</div>)}

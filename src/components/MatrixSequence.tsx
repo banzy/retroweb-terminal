@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import type { Quote } from "@/lib/quotes";
 import { playAutoTypeTick } from "@/lib/crtSounds";
 
 const PHRASE = "Wake up, Neo...";
 const CHAR_DELAY = 90;
-const QUOTE_CHAR_DELAY = 35;
-const CURSOR_PAUSE = 3000;
+const QUOTE_CHAR_DELAY = 36;
+const CURSOR_PAUSE = 2400;
 /** Pause after the phrase finishes, before the quote appears (ms). */
-const POST_TYPE_PAUSE = 4000;
+const POST_TYPE_PAUSE = 3200;
 
 type Phase = "cursor" | "typing" | "pause" | "quote";
 
@@ -37,11 +37,17 @@ export function MatrixSequence({ quote, bloomEnabled = false, children }: Props)
       return;
     }
     const t = window.setTimeout(() => {
-      playAutoTypeTick();
       setDisplayed(PHRASE.slice(0, displayed.length + 1));
     }, CHAR_DELAY);
     return () => window.clearTimeout(t);
   }, [phase, displayed]);
+
+  // Play the tick after the character is committed to the DOM, so audio
+  // and the visible glyph land in the same paint frame.
+  useLayoutEffect(() => {
+    if (phase !== "typing" || displayed.length === 0) return;
+    playAutoTypeTick();
+  }, [displayed, phase]);
 
   // Brief pause after typing → show quote
   useEffect(() => {
@@ -63,11 +69,19 @@ export function MatrixSequence({ quote, bloomEnabled = false, children }: Props)
     if (phase !== "quote") return;
     if (quoteDisplayed.length >= quoteBlock.length) return;
     const t = window.setTimeout(() => {
-      playAutoTypeTick();
       setQuoteDisplayed(quoteBlock.slice(0, quoteDisplayed.length + 1));
     }, QUOTE_CHAR_DELAY);
     return () => window.clearTimeout(t);
   }, [phase, quoteBlock, quoteDisplayed]);
+
+  // Play the tick aligned with the just-committed quote character. Skip
+  // whitespace so the rhythm tracks the visible glyphs only.
+  useLayoutEffect(() => {
+    if (phase !== "quote" || quoteDisplayed.length === 0) return;
+    const last = quoteDisplayed[quoteDisplayed.length - 1];
+    if (last === " " || last === "\n") return;
+    playAutoTypeTick();
+  }, [quoteDisplayed, phase]);
 
   return (
     <div
