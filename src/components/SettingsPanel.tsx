@@ -2,6 +2,7 @@ import { useState } from "react";
 import { PRESET_THEMES, CABINETS, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import type { CrtFont, FontId } from "@/lib/crtFonts";
 import { playToggleClick, type SoundLoudness } from "@/lib/crtSounds";
+import { resetSeenQuotes } from "@/lib/quotes";
 
 type Props = {
   asciiWidth: number;
@@ -139,11 +140,46 @@ export function SettingsPanel({
           onClick={() => setOpen((v) => !v)}
           className="flex-1 flex items-center justify-between px-3 py-2 hover:text-[var(--phosphor)] font-mono"
         >
-          <span>[{open ? "-" : "+"}] CONFIG :: TERMINAL SETTINGS</span>
-          <span className="text-[var(--phosphor-dim)] hidden sm:inline">
-            THEME={theme.label} | GLASS={glassEnabled ? "ON" : "OFF"} | SCAN=
-            {Math.round(scanlineIntensity * 100)}%
+          <span>[{open ? "-" : "+"}] CONFIG</span>
+          <span className="flex items-center gap-2 ml-3">
+            {(["green", "amber", "blue", "red", "plasma", "white"] as const).map((id) => {
+              const p = PRESET_THEMES.find((x) => x.id === id)!;
+              const active = theme.id === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTheme(p);
+                  }}
+                  className={`font-mono uppercase tracking-wide ${active ? "text-[var(--phosphor)] underline underline-offset-2" : "text-[var(--phosphor-dim)]"} hover:text-[var(--phosphor)]`}
+                >
+                  {id}
+                </button>
+              );
+            })}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setTheme({ ...theme, id: "custom", label: "CUSTOM" });
+              }}
+              className={`font-mono uppercase tracking-wide ${theme.id === "custom" ? "text-[var(--phosphor)] underline underline-offset-2" : "text-[var(--phosphor-dim)]"} hover:text-[var(--phosphor)]`}
+            >
+              custom
+            </button>
           </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            resetSeenQuotes();
+            window.dispatchEvent(new CustomEvent("w1975:reboot"));
+          }}
+          className="px-3 py-2 crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2"
+        >
+          [ RESET VIEWED QUOTES ]
         </button>
         <button
           type="button"

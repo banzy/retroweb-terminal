@@ -370,24 +370,31 @@
     100% { opacity: 0; transform: scaleY(0.001) scaleX(0); filter: brightness(10); }
   }
 
-  /* Burn-in ghosting — faint trailing duplicate */
+  /* Burn-in ghosting — phosphor afterglow on text */
   .crt-burnin .crt-text,
   .crt-burnin .ascii-pre {
+    text-shadow:
+      0 0 0.6px var(--phosphor),
+      0 0 4px color-mix(in oklab, var(--phosphor) 75%, transparent),
+      0 1px 8px color-mix(in oklab, var(--phosphor) 55%, transparent),
+      0 2px 14px color-mix(in oklab, var(--phosphor) 40%, transparent),
+      0 0 22px color-mix(in oklab, var(--phosphor) 30%, transparent);
+  }
+  .crt-burnin .crt-curve-inner {
     position: relative;
   }
-  .crt-burnin {
-    --burnin-opacity: 0.18;
-  }
-  .crt-burnin .crt-curve-inner::before,
-  .crt-burnin .crt-burnin-layer {
+  .crt-burnin .crt-curve-inner::after {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: inherit;
-    opacity: var(--burnin-opacity);
+    background: radial-gradient(
+      ellipse at 50% 55%,
+      color-mix(in oklab, var(--phosphor) 14%, transparent) 0%,
+      transparent 65%
+    );
     mix-blend-mode: screen;
-    filter: blur(0.5px);
+    z-index: 5;
   }
 
   /* Dynamic brightness flicker tied to text density */
@@ -426,6 +433,10 @@
     0%   { opacity: 1; filter: none; }
     70%  { opacity: 0.25; filter: blur(0.6px); }
     100% { opacity: 0; filter: blur(1px); }
+  }
+
+  .boot-dissolve {
+    animation: matrix-phrase-dissolve 1.6s ease-out forwards;
   }
 
   .crt-checkbox {

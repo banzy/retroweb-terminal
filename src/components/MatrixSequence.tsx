@@ -53,7 +53,7 @@ export function MatrixSequence({ quote, bloomEnabled = false, children }: Props)
     "",
     `"${quote.quote}"`,
     "",
-    `  -- ${quote.author.toUpperCase()}${quote.tags.length ? `  [${quote.tags.join(", ")}]` : ""}`,
+    `  -- ${quote.author.toUpperCase()}`,
   ].join("\n");
   const quoteStyle: React.CSSProperties = {
     whiteSpace: "pre-wrap",

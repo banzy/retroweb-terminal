@@ -47,6 +47,7 @@ async function main() {
   const dataLines = lines.slice(3);
 
   const quotes = [];
+  let nextId = 1;
   for (const line of dataLines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
@@ -59,7 +60,7 @@ async function main() {
 
     if (!author || !quote || quote.length < 10) continue;
 
-    quotes.push({ author, quote, tags });
+    quotes.push({ id: nextId++, author, quote, tags });
   }
 
   await fs.writeFile(outPath, JSON.stringify(quotes, null, 2), "utf8");
