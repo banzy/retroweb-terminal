@@ -10,6 +10,7 @@ import { SettingsPanel } from "@/components/SettingsPanel";
 import { BootSequence } from "@/components/BootSequence";
 import { fetchWebsiteContent } from "@/lib/fetchWebsite";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
+import { getRandomQuote } from "@/lib/quotes";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import { FONTS, getFontStack, type FontId } from "@/lib/crtFonts";
 import { useEffect } from "react";
@@ -76,6 +77,7 @@ function Index() {
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
   const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", true);
   const [fontId, setFontId] = useLocalStorageState<FontId>("w1975.fontId", "system");
+  const [quote] = useState(() => getRandomQuote());
   const [booting, setBooting] = useState(bootSeq);
   const [rebootKey, setRebootKey] = useState(0);
   const [forcePowerOn, setForcePowerOn] = useState(false);
@@ -254,7 +256,13 @@ ANY MODERN WEBSITE.
 EXAMPLES:
   > https://en.wikipedia.org/wiki/ARPANET
   > https://news.ycombinator.com
-  > https://example.com`}
+  > https://example.com
+
+------------------------------------------------------------------------
+
+  "${quote.quote}"
+
+  -- ${quote.author.toUpperCase()}${quote.tags.length ? `  [${quote.tags.join(", ")}]` : ""}`}
           </pre>
         )}
 

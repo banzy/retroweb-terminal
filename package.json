@@ -7,10 +7,12 @@
     "node": ">=20.19.0"
   },
   "scripts": {
+    "build:quotes": "node scripts/build-quotes.mjs",
+    "predev": "node scripts/build-quotes.mjs",
     "dev": "vite dev",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
-    "build:hostinger": "VITE_FETCH_API=fetch.php vite build && node scripts/build-hostinger.mjs",
+    "build": "node scripts/build-quotes.mjs && vite build",
+    "build:dev": "node scripts/build-quotes.mjs && vite build --mode development",
+    "build:hostinger": "node scripts/build-quotes.mjs && VITE_FETCH_API=fetch.php vite build && node scripts/build-hostinger.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."
