@@ -109,8 +109,8 @@
         } catch {}
       })();
     </script>
-    <script type="module" crossorigin src="/wakeup/assets/index-3ByJHU_D.js"></script>
-    <link rel="stylesheet" crossorigin href="/wakeup/assets/index-B018dTj5.css">
+    <script type="module" crossorigin src="/wakeup/assets/index-KgrvfAfy.js"></script>
+    <link rel="stylesheet" crossorigin href="/wakeup/assets/index-BRsCdJgF.css">
   </head>
   <body>
     <div id="root">

@@ -1,11 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Quote } from "@/lib/quotes";
-import { playAutoTypeTick } from "@/lib/crtSounds";
+import { isAudioReady, playAutoTypeTick, subscribeAudioReady } from "@/lib/crtSounds";
 
 const PHRASE = "Wake up, Neo...";
 const CHAR_DELAY = 36;
 const QUOTE_CHAR_DELAY = 36;
 const CURSOR_PAUSE = 2400;
+/** Max time to wait for the AudioContext to come online before starting the
+ * typewriter anyway (browsers block audio until first user gesture). */
+const AUDIO_READY_FALLBACK = 5000;
 /** Pause after the phrase finishes, before the quote appears (ms). */
 const POST_TYPE_PAUSE = 3200;
 /** Delay between dismissing the current quote and showing the next one (ms). */
@@ -24,14 +27,30 @@ export function MatrixSequence({ quote, bloomEnabled = false, skipping = false, 
   const [phase, setPhase] = useState<Phase>("cursor");
   const [displayed, setDisplayed] = useState("");
   const [quoteDisplayed, setQuoteDisplayed] = useState("");
+  const [audioReady, setAudioReady] = useState(() => isAudioReady());
   const prevQuoteId = useRef(quote.id);
 
-  // Cursor pause → start typing
+  // Browsers block audio until a user gesture occurs. Wait for the
+  // AudioContext to reach "running" so the typing ticks aren't lost,
+  // with a hard fallback so the sequence still proceeds if sounds
+  // are disabled or the user never interacts.
+  useEffect(() => {
+    if (audioReady) return;
+    const unsub = subscribeAudioReady(() => setAudioReady(true));
+    const fallback = window.setTimeout(() => setAudioReady(true), AUDIO_READY_FALLBACK);
+    return () => {
+      unsub();
+      window.clearTimeout(fallback);
+    };
+  }, [audioReady]);
+
+  // Cursor pause → start typing (only once audio is ready / fallback hit)
   useEffect(() => {
     if (phase !== "cursor") return;
+    if (!audioReady) return;
     const t = window.setTimeout(() => setPhase("typing"), CURSOR_PAUSE);
     return () => window.clearTimeout(t);
-  }, [phase]);
+  }, [phase, audioReady]);
 
   // Typewriter effect
   useEffect(() => {

@@ -30,6 +30,34 @@ let flags: SoundFlags = {
   rebootChime: false,
 };
 
+// Tracks whether the AudioContext has reached "running" state at least once
+// (i.e. browser autoplay policy is satisfied and sounds can actually play).
+let audioReady = false;
+const audioReadyListeners = new Set<() => void>();
+
+function markAudioReady() {
+  if (audioReady) return;
+  audioReady = true;
+  const cbs = [...audioReadyListeners];
+  audioReadyListeners.clear();
+  for (const cb of cbs) cb();
+}
+
+export function isAudioReady(): boolean {
+  return audioReady;
+}
+
+export function subscribeAudioReady(cb: () => void): () => void {
+  if (audioReady) {
+    cb();
+    return () => {};
+  }
+  audioReadyListeners.add(cb);
+  return () => {
+    audioReadyListeners.delete(cb);
+  };
+}
+
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   if (!ctx) {
@@ -41,12 +69,16 @@ function getCtx(): AudioContext | null {
     masterGain = ctx.createGain();
     masterGain.gain.value = LOUDNESS_GAIN[loudness];
     masterGain.connect(ctx.destination);
+    ctx.addEventListener("statechange", () => {
+      if (ctx?.state === "running") markAudioReady();
+    });
   }
-  if (ctx.state !== "running") {
-    if (ctx.state === "suspended") void ctx.resume();
-    return null;
+  if (ctx.state === "running") {
+    markAudioReady();
+    return ctx;
   }
-  return ctx;
+  if (ctx.state === "suspended") void ctx.resume();
+  return null;
 }
 
 // Call once on app mount. Creates the AudioContext early and registers a
