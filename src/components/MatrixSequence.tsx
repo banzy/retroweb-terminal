@@ -3,8 +3,8 @@ import type { Quote } from "@/lib/quotes";
 import { playAutoTypeTick } from "@/lib/crtSounds";
 
 const PHRASE = "Wake up, Neo...";
-const CHAR_DELAY = 24;
-const QUOTE_CHAR_DELAY = 24;
+const CHAR_DELAY = 35;
+const QUOTE_CHAR_DELAY = 30;
 const CURSOR_PAUSE = 2400;
 /** Pause after the phrase finishes, before the quote appears (ms). */
 const POST_TYPE_PAUSE = 3200;
