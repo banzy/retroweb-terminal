@@ -21,6 +21,28 @@ import {
   type SoundLoudness,
 } from "@/lib/crtSounds";
 
+const DEFAULT_CONFIG = {
+  asciiWidth: 80,
+  theme: PRESET_THEMES[0],
+  glassEnabled: true,
+  glassIntensity: 0.35,
+  scanlineIntensity: 0.25,
+  bgTint: 0,
+  bgRadial: true,
+  curvature: false,
+  rgbSplit: 0,
+  bloom: false,
+  trackingGlitch: false,
+  powerAnim: false,
+  burnIn: false,
+  sndToggle: false,
+  sndAutoType: false,
+  soundLoudness: "low" as SoundLoudness,
+  cabinet: "vt100" as CabinetId,
+  bootSeq: true,
+  fontId: "system" as FontId,
+};
+
 export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
@@ -39,45 +61,55 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState("READY");
-  const [asciiWidth, setAsciiWidth] = useLocalStorageState<number>("w1975.asciiWidth", 80);
-  const [theme, setTheme] = useLocalStorageState<CrtTheme>("w1975.theme", PRESET_THEMES[0]);
-  const [glassEnabled, setGlassEnabled] = useLocalStorageState<boolean>("w1975.glassEnabled", true);
-  const [glassIntensity, setGlassIntensity] = useLocalStorageState<number>(
-    "w1975.glassIntensity",
-    0.35,
-  );
-  const [scanlineIntensity, setScanlineIntensity] = useLocalStorageState<number>(
-    "w1975.scanlineIntensity",
-    0.25,
-  );
-  const [bgTint, setBgTint] = useLocalStorageState<number>("w1975.bgTint", 0);
-  const [bgRadial, setBgRadial] = useLocalStorageState<boolean>("w1975.bgRadial", true);
+  const [asciiWidth, setAsciiWidth] = useLocalStorageState<number>("w1975.asciiWidth", DEFAULT_CONFIG.asciiWidth);
+  const [theme, setTheme] = useLocalStorageState<CrtTheme>("w1975.theme", DEFAULT_CONFIG.theme);
+  const [glassEnabled, setGlassEnabled] = useLocalStorageState<boolean>("w1975.glassEnabled", DEFAULT_CONFIG.glassEnabled);
+  const [glassIntensity, setGlassIntensity] = useLocalStorageState<number>("w1975.glassIntensity", DEFAULT_CONFIG.glassIntensity);
+  const [scanlineIntensity, setScanlineIntensity] = useLocalStorageState<number>("w1975.scanlineIntensity", DEFAULT_CONFIG.scanlineIntensity);
+  const [bgTint, setBgTint] = useLocalStorageState<number>("w1975.bgTint", DEFAULT_CONFIG.bgTint);
+  const [bgRadial, setBgRadial] = useLocalStorageState<boolean>("w1975.bgRadial", DEFAULT_CONFIG.bgRadial);
   // Advanced
-  const [curvature, setCurvature] = useLocalStorageState<boolean>("w1975.curvature", false);
-  const [rgbSplit, setRgbSplit] = useLocalStorageState<number>("w1975.rgbSplit", 0);
-  const [bloom, setBloom] = useLocalStorageState<boolean>("w1975.bloom", false);
-  const [trackingGlitch, setTrackingGlitch] = useLocalStorageState<boolean>(
-    "w1975.trackingGlitch",
-    false,
-  );
-  const [powerAnim, setPowerAnim] = useLocalStorageState<boolean>("w1975.powerAnim", false);
-  const [burnIn, setBurnIn] = useLocalStorageState<boolean>("w1975.burnIn", false);
+  const [curvature, setCurvature] = useLocalStorageState<boolean>("w1975.curvature", DEFAULT_CONFIG.curvature);
+  const [rgbSplit, setRgbSplit] = useLocalStorageState<number>("w1975.rgbSplit", DEFAULT_CONFIG.rgbSplit);
+  const [bloom, setBloom] = useLocalStorageState<boolean>("w1975.bloom", DEFAULT_CONFIG.bloom);
+  const [trackingGlitch, setTrackingGlitch] = useLocalStorageState<boolean>("w1975.trackingGlitch", DEFAULT_CONFIG.trackingGlitch);
+  const [powerAnim, setPowerAnim] = useLocalStorageState<boolean>("w1975.powerAnim", DEFAULT_CONFIG.powerAnim);
+  const [burnIn, setBurnIn] = useLocalStorageState<boolean>("w1975.burnIn", DEFAULT_CONFIG.burnIn);
   // Sound toggles
-  const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", false);
-  const [sndAutoType, setSndAutoType] = useLocalStorageState<boolean>("w1975.sndAutoType", false);
-  const [soundLoudnessValue, setSoundLoudnessValue] = useLocalStorageState<SoundLoudness>(
-    "w1975.soundLoudness",
-    "low",
-  );
-  const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "vt100");
+  const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", DEFAULT_CONFIG.sndToggle);
+  const [sndAutoType, setSndAutoType] = useLocalStorageState<boolean>("w1975.sndAutoType", DEFAULT_CONFIG.sndAutoType);
+  const [soundLoudnessValue, setSoundLoudnessValue] = useLocalStorageState<SoundLoudness>("w1975.soundLoudness", DEFAULT_CONFIG.soundLoudness);
+  const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", DEFAULT_CONFIG.cabinet);
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
-  const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", true);
-  const [fontId, setFontId] = useLocalStorageState<FontId>("w1975.fontId", "system");
+  const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", DEFAULT_CONFIG.bootSeq);
+  const [fontId, setFontId] = useLocalStorageState<FontId>("w1975.fontId", DEFAULT_CONFIG.fontId);
   const [quote] = useState(() => getRandomQuote());
   const [booting, setBooting] = useState(bootSeq);
   const [rebootKey, setRebootKey] = useState(0);
   const [forcePowerOn, setForcePowerOn] = useState(false);
   const [collapsing, setCollapsing] = useState(false);
+
+  function restoreDefaultConfig() {
+    setAsciiWidth(DEFAULT_CONFIG.asciiWidth);
+    setTheme(DEFAULT_CONFIG.theme);
+    setGlassEnabled(DEFAULT_CONFIG.glassEnabled);
+    setGlassIntensity(DEFAULT_CONFIG.glassIntensity);
+    setScanlineIntensity(DEFAULT_CONFIG.scanlineIntensity);
+    setBgTint(DEFAULT_CONFIG.bgTint);
+    setBgRadial(DEFAULT_CONFIG.bgRadial);
+    setCurvature(DEFAULT_CONFIG.curvature);
+    setRgbSplit(DEFAULT_CONFIG.rgbSplit);
+    setBloom(DEFAULT_CONFIG.bloom);
+    setTrackingGlitch(DEFAULT_CONFIG.trackingGlitch);
+    setPowerAnim(DEFAULT_CONFIG.powerAnim);
+    setBurnIn(DEFAULT_CONFIG.burnIn);
+    setSndToggle(DEFAULT_CONFIG.sndToggle);
+    setSndAutoType(DEFAULT_CONFIG.sndAutoType);
+    setSoundLoudnessValue(DEFAULT_CONFIG.soundLoudness);
+    setCabinet(DEFAULT_CONFIG.cabinet);
+    setBootSeq(DEFAULT_CONFIG.bootSeq);
+    setFontId(DEFAULT_CONFIG.fontId);
+  }
 
   useEffect(() => {
     function onReboot() {
@@ -227,6 +259,7 @@ function Index() {
                 fontId={fontId}
                 setFontId={setFontId}
                 fonts={FONTS}
+                onRestoreDefaultConfig={restoreDefaultConfig}
               />
             </MatrixSequence>
           )

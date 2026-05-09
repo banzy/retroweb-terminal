@@ -46,6 +46,7 @@ type Props = {
   fontId: FontId;
   setFontId: (id: FontId) => void;
   fonts: CrtFont[];
+  onRestoreDefaultConfig: () => void;
 };
 
 export function SettingsPanel({
@@ -90,6 +91,7 @@ export function SettingsPanel({
   fontId,
   setFontId,
   fonts,
+  onRestoreDefaultConfig,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [advOpen, setAdvOpen] = useState(false);
@@ -180,6 +182,13 @@ export function SettingsPanel({
           className="px-3 py-2 crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2"
         >
           [ RESET VIEWED QUOTES ]
+        </button>
+        <button
+          type="button"
+          onClick={onRestoreDefaultConfig}
+          className="px-3 py-2 crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2"
+        >
+          [ DEFAULT ]
         </button>
         <button
           type="button"
