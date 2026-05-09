@@ -139,7 +139,7 @@ export function SettingsPanel({
   }
 
   return (
-    <div className="border border-[var(--phosphor-dim)] mt-3 text-xs crt-text text-[var(--phosphor-dim)]">
+    <div className="border border-[var(--phosphor-dim)] mt-3 text-xs crt-text text-[var(--phosphor-dim)] font-mono">
       <div className="flex items-center">
         <button
           type="button"

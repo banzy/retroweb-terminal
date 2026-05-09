@@ -13,7 +13,7 @@ import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { getRandomQuote } from "@/lib/quotes";
 import { MatrixSequence } from "@/components/MatrixSequence";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
-import { FONTS, getFontStack, type FontId } from "@/lib/crtFonts";
+import { FONTS, getFontCssVars, type FontId } from "@/lib/crtFonts";
 import { useEffect } from "react";
 import {
   playRebootChime,
@@ -170,7 +170,10 @@ function Index() {
     for (const [k, v] of Object.entries(vars)) {
       if (k.startsWith("--")) root.style.setProperty(k, String(v));
     }
-    root.style.setProperty("--terminal-font", getFontStack(fontId));
+    const fontVars = getFontCssVars(fontId);
+    for (const [k, v] of Object.entries(fontVars)) {
+      root.style.setProperty(k, v);
+    }
   }, [theme, fontId]);
 
   async function handleSubmit(url: string) {
@@ -198,7 +201,7 @@ function Index() {
     <>
       <TerminalShell
         key={rebootKey}
-        style={{ ...applyThemeVars(theme), ["--terminal-font" as never]: getFontStack(fontId) }}
+        style={{ ...applyThemeVars(theme), ...getFontCssVars(fontId) }}
         glassEnabled={glassEnabled}
         glassIntensity={glassIntensity}
         themeLabel={theme.label}

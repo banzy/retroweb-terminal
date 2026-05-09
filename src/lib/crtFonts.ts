@@ -7,7 +7,6 @@ export type FontId =
   | "roboto-mono"
   | "space-mono"
   | "courier-prime"
-  | "cutive-mono"
   | "nova-mono"
   | "azeret-mono";
 
@@ -30,11 +29,24 @@ export const FONTS: CrtFont[] = [
   { id: "roboto-mono", label: "ROBOTO MONO", stack: `"Roboto Mono", ui-monospace, monospace` },
   { id: "space-mono", label: "SPACE MONO", stack: `"Space Mono", ui-monospace, monospace` },
   { id: "courier-prime", label: "COURIER PRIME", stack: `"Courier Prime", "Courier New", monospace` },
-  { id: "cutive-mono", label: "CUTIVE MONO", stack: `"Cutive Mono", ui-monospace, monospace` },
   { id: "nova-mono", label: "NOVA MONO", stack: `"Nova Mono", ui-monospace, monospace` },
   { id: "azeret-mono", label: "AZERET MONO", stack: `"Azeret Mono", ui-monospace, monospace` },
 ];
 
 export function getFontStack(id: FontId): string {
   return (FONTS.find((f) => f.id === id) ?? FONTS[0]).stack;
+}
+
+export function getFontScale(id: FontId): number {
+  return id === "vt323" ? 1.2 : 1;
+}
+
+export function getFontCssVars(id: FontId): Record<string, string> {
+  const scale = getFontScale(id);
+  return {
+    "--terminal-font": getFontStack(id),
+    "--text-xs": `${0.75 * scale}rem`,
+    "--text-sm": `${0.875 * scale}rem`,
+    "--text-base": `${scale}rem`,
+  };
 }
