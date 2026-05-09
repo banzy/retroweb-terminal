@@ -42,7 +42,10 @@ function getCtx(): AudioContext | null {
     masterGain.gain.value = LOUDNESS_GAIN[loudness];
     masterGain.connect(ctx.destination);
   }
-  if (ctx.state === "suspended") void ctx.resume();
+  if (ctx.state !== "running") {
+    if (ctx.state === "suspended") void ctx.resume();
+    return null;
+  }
   return ctx;
 }
 
