@@ -35,7 +35,7 @@ export function TerminalOutput({ data, asciiWidth }: Props) {
                   paddingLeft: `${(h.level - 1) * 1}rem`,
                 }}
               >
-                {"#".repeat(h.level)} {h.text}
+                {"*".repeat(h.level)} {h.text}
               </div>
             ))}
           </div>

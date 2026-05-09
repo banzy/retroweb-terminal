@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PRESET_THEMES, CABINETS, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import type { CrtFont, FontId } from "@/lib/crtFonts";
-import { playToggleClick, type SoundLoudness } from "@/lib/crtSounds";
+import { playRebootChime, playToggleClick, type SoundLoudness } from "@/lib/crtSounds";
 import { resetSeenQuotes } from "@/lib/quotes";
 
 type Props = {
@@ -35,6 +35,8 @@ type Props = {
   setSndToggle: (b: boolean) => void;
   sndAutoType: boolean;
   setSndAutoType: (b: boolean) => void;
+  sndReboot: boolean;
+  setSndReboot: (b: boolean) => void;
   soundLoudness: SoundLoudness;
   setSoundLoudness: (v: SoundLoudness) => void;
   cabinet: CabinetId;
@@ -80,6 +82,8 @@ export function SettingsPanel({
   setSndToggle,
   sndAutoType,
   setSndAutoType,
+  sndReboot,
+  setSndReboot,
   soundLoudness,
   setSoundLoudness,
   cabinet,
@@ -144,7 +148,7 @@ export function SettingsPanel({
         >
           <span>[{open ? "-" : "+"}] CONFIG</span>
           <span className="flex items-center gap-2 ml-3">
-            {(["green", "amber", "blue", "red", "plasma", "white"] as const).map((id) => {
+            {(["green", "amber", "blue", "red", "plasma", "ibm5151"] as const).map((id) => {
               const p = PRESET_THEMES.find((x) => x.id === id)!;
               const active = theme.id === id;
               return (
@@ -499,6 +503,14 @@ export function SettingsPanel({
                   </div>
                   <ToggleRow label="AUTO_TYPE" checked={sndAutoType} onChange={setSndAutoType} />
                   <ToggleRow label="TOGGLE_CLICK" checked={sndToggle} onChange={setSndToggle} />
+                  <ToggleRow
+                    label="REBOOT_SOUND"
+                    checked={sndReboot}
+                    onChange={(v) => {
+                      setSndReboot(v);
+                      if (v) playRebootChime();
+                    }}
+                  />
                 </div>
               </div>
             )}

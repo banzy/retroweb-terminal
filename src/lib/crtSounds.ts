@@ -7,6 +7,7 @@ type SoundFlags = {
   errorBeep: boolean;
   toggleClick: boolean;
   autoType: boolean;
+  rebootChime: boolean;
 };
 
 export type SoundLoudness = "low" | "med" | "high";
@@ -26,6 +27,7 @@ let flags: SoundFlags = {
   errorBeep: false,
   toggleClick: false,
   autoType: false,
+  rebootChime: false,
 };
 
 function getCtx(): AudioContext | null {
@@ -154,6 +156,107 @@ export function playAutoTypeTick() {
   thud.connect(thudGain).connect(masterGain);
   thud.start(now);
   thud.stop(now + 0.045);
+}
+
+// ---------- REBOOT CHIME ----------
+// 70s/early-80s style power-on: relay clack, transformer hum, CRT whine
+// ramp-up, and a final "system ready" beep. Total length ~1.3s.
+// Gating is done at the call site (via rebootChimeEnabled()) so the flag
+// is checked right before scheduling, avoiding any stale-closure race.
+export function rebootChimeEnabled(): boolean {
+  return flags.rebootChime;
+}
+export function playRebootChime() {
+  const ac = getCtx();
+  if (!ac || !masterGain) return;
+  const now = ac.currentTime;
+  const out = ac.createGain();
+  out.gain.value = 0.12;
+  out.connect(masterGain);
+
+  // Relay clack: short noise burst, high-passed, with a paired low thud.
+  const clackDur = 0.07;
+  const clackBuf = ac.createBuffer(1, Math.floor(ac.sampleRate * clackDur), ac.sampleRate);
+  const cd = clackBuf.getChannelData(0);
+  for (let i = 0; i < cd.length; i++) cd[i] = (Math.random() * 2 - 1) * (1 - i / cd.length);
+  const clackSrc = ac.createBufferSource();
+  clackSrc.buffer = clackBuf;
+  const clackHp = ac.createBiquadFilter();
+  clackHp.type = "highpass";
+  clackHp.frequency.value = 900;
+  const clackG = ac.createGain();
+  clackG.gain.value = 0.5;
+  clackSrc.connect(clackHp).connect(clackG).connect(out);
+  clackSrc.start(now);
+  clackSrc.stop(now + clackDur);
+
+  const thud = ac.createOscillator();
+  thud.type = "sine";
+  thud.frequency.setValueAtTime(130, now);
+  thud.frequency.exponentialRampToValueAtTime(45, now + 0.2);
+  const thudG = ac.createGain();
+  thudG.gain.setValueAtTime(0.5, now);
+  thudG.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+  thud.connect(thudG).connect(out);
+  thud.start(now);
+  thud.stop(now + 0.24);
+
+  // Transformer hum: 60Hz + 120Hz fundamental that swells in then settles.
+  const humStart = now;
+  const humEnd = now + 1.35;
+  const hum1 = ac.createOscillator();
+  hum1.type = "sine";
+  hum1.frequency.value = 60;
+  const hum2 = ac.createOscillator();
+  hum2.type = "sine";
+  hum2.frequency.value = 120;
+  const humG = ac.createGain();
+  humG.gain.setValueAtTime(0.0001, humStart);
+  humG.gain.exponentialRampToValueAtTime(0.22, humStart + 0.06);
+  humG.gain.setValueAtTime(0.22, humEnd - 0.3);
+  humG.gain.exponentialRampToValueAtTime(0.0001, humEnd);
+  hum1.connect(humG).connect(out);
+  hum2.connect(humG);
+  hum1.start(humStart);
+  hum2.start(humStart);
+  hum1.stop(humEnd + 0.05);
+  hum2.stop(humEnd + 0.05);
+
+  // CRT flyback whine: rises from low to ~2.4kHz, narrow bandpass for that
+  // pitched-but-leaky character.
+  const whineStart = now + 0.05;
+  const whineEnd = now + 1.1;
+  const whine = ac.createOscillator();
+  whine.type = "sawtooth";
+  whine.frequency.setValueAtTime(80, whineStart);
+  whine.frequency.exponentialRampToValueAtTime(2400, whineStart + 0.55);
+  whine.frequency.linearRampToValueAtTime(2400, whineEnd);
+  const whineFilter = ac.createBiquadFilter();
+  whineFilter.type = "bandpass";
+  whineFilter.frequency.value = 2200;
+  whineFilter.Q.value = 4;
+  const whineG = ac.createGain();
+  whineG.gain.setValueAtTime(0.0001, whineStart);
+  whineG.gain.exponentialRampToValueAtTime(0.16, whineStart + 0.45);
+  whineG.gain.exponentialRampToValueAtTime(0.05, whineEnd);
+  whineG.gain.exponentialRampToValueAtTime(0.0001, whineEnd + 0.25);
+  whine.connect(whineFilter).connect(whineG).connect(out);
+  whine.start(whineStart);
+  whine.stop(whineEnd + 0.3);
+
+  // System-ready beep: short square pip at 880Hz.
+  const beepT = now + 1.05;
+  const beep = ac.createOscillator();
+  beep.type = "square";
+  beep.frequency.value = 880;
+  const beepG = ac.createGain();
+  beepG.gain.setValueAtTime(0.0001, beepT);
+  beepG.gain.exponentialRampToValueAtTime(0.35, beepT + 0.01);
+  beepG.gain.setValueAtTime(0.35, beepT + 0.16);
+  beepG.gain.exponentialRampToValueAtTime(0.0001, beepT + 0.24);
+  beep.connect(beepG).connect(out);
+  beep.start(beepT);
+  beep.stop(beepT + 0.28);
 }
 
 // ---------- ERROR BEEP ----------

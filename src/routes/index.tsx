@@ -16,6 +16,8 @@ import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/
 import { FONTS, getFontStack, type FontId } from "@/lib/crtFonts";
 import { useEffect } from "react";
 import {
+  playRebootChime,
+  rebootChimeEnabled,
   setSoundFlags,
   setSoundLoudness,
   type SoundLoudness,
@@ -37,6 +39,7 @@ const DEFAULT_CONFIG = {
   burnIn: true,
   sndToggle: true,
   sndAutoType: true,
+  sndReboot: true,
   soundLoudness: "low" as SoundLoudness,
   cabinet: "pet2001" as CabinetId,
   bootSeq: true,
@@ -78,6 +81,7 @@ function Index() {
   // Sound toggles
   const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", DEFAULT_CONFIG.sndToggle);
   const [sndAutoType, setSndAutoType] = useLocalStorageState<boolean>("w1975.sndAutoType", DEFAULT_CONFIG.sndAutoType);
+  const [sndReboot, setSndReboot] = useLocalStorageState<boolean>("w1975.sndReboot", DEFAULT_CONFIG.sndReboot);
   const [soundLoudnessValue, setSoundLoudnessValue] = useLocalStorageState<SoundLoudness>("w1975.soundLoudness", DEFAULT_CONFIG.soundLoudness);
   const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", DEFAULT_CONFIG.cabinet);
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
@@ -105,6 +109,7 @@ function Index() {
     setBurnIn(DEFAULT_CONFIG.burnIn);
     setSndToggle(DEFAULT_CONFIG.sndToggle);
     setSndAutoType(DEFAULT_CONFIG.sndAutoType);
+    setSndReboot(DEFAULT_CONFIG.sndReboot);
     setSoundLoudnessValue(DEFAULT_CONFIG.soundLoudness);
     setCabinet(DEFAULT_CONFIG.cabinet);
     setBootSeq(DEFAULT_CONFIG.bootSeq);
@@ -114,6 +119,7 @@ function Index() {
   useEffect(() => {
     function onReboot() {
       const y = window.scrollY;
+      if (rebootChimeEnabled()) playRebootChime();
       // Play collapse-to-middle first, then remount with power-on + boot.
       setCollapsing(true);
       window.setTimeout(() => {
@@ -150,9 +156,10 @@ function Index() {
       errorBeep: false,
       toggleClick: sndToggle,
       autoType: sndAutoType,
+      rebootChime: sndReboot,
     });
     setSoundLoudness(soundLoudnessValue);
-  }, [sndToggle, sndAutoType, soundLoudnessValue]);
+  }, [sndToggle, sndAutoType, sndReboot, soundLoudnessValue]);
 
   // Apply theme + font CSS vars to <html> so they cascade everywhere
   // immediately (including the boot overlay's pseudo-elements and the
@@ -248,6 +255,8 @@ function Index() {
                 setSndToggle={setSndToggle}
                 sndAutoType={sndAutoType}
                 setSndAutoType={setSndAutoType}
+                sndReboot={sndReboot}
+                setSndReboot={setSndReboot}
                 soundLoudness={soundLoudnessValue}
                 setSoundLoudness={setSoundLoudnessValue}
                 cabinet={cabinet}
