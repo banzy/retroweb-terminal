@@ -77,17 +77,24 @@ function getCtx(): AudioContext | null {
     markAudioReady();
     return ctx;
   }
-  if (ctx.state === "suspended") void ctx.resume();
+  if (ctx.state === "suspended") {
+    void ctx.resume().then(() => {
+      if (ctx?.state === "running") markAudioReady();
+    });
+  }
   return null;
 }
 
-// Call once on app mount. Creates the AudioContext early and registers a
-// one-time interaction listener so the context is resumed on the very first
-// user gesture, before any sound is requested.
+// Call once on app mount. Eagerly creates the AudioContext (which lets
+// browsers with autoplay permission for this site reach "running" right
+// away, no gesture required) and registers a one-time interaction listener
+// so the context is resumed on the very first user gesture otherwise.
 export function initAudioContext() {
   if (typeof window === "undefined") return;
+  getCtx();
+  if (audioReady) return;
   const resume = () => {
-    getCtx(); // ensures context exists and calls resume()
+    getCtx();
     window.removeEventListener("pointerdown", resume);
     window.removeEventListener("keydown", resume);
   };
