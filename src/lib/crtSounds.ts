@@ -6,6 +6,7 @@ type SoundFlags = {
   modem: boolean;
   errorBeep: boolean;
   toggleClick: boolean;
+  autoType: boolean;
 };
 
 export type SoundLoudness = "low" | "med" | "high";
@@ -24,6 +25,7 @@ let flags: SoundFlags = {
   modem: false,
   errorBeep: false,
   toggleClick: false,
+  autoType: false,
 };
 
 function getCtx(): AudioContext | null {
@@ -115,6 +117,43 @@ export function playToggleClick() {
   osc.connect(g).connect(masterGain);
   osc.start(now);
   osc.stop(now + 0.06);
+}
+
+// ---------- AUTO TYPE ----------
+export function playAutoTypeTick() {
+  if (!flags.autoType) return;
+  const ac = getCtx();
+  if (!ac || !masterGain) return;
+  const now = ac.currentTime;
+  const dur = 0.026;
+
+  const buf = ac.createBuffer(1, Math.floor(ac.sampleRate * dur), ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
+  }
+  const noise = ac.createBufferSource();
+  noise.buffer = buf;
+  const bp = ac.createBiquadFilter();
+  bp.type = "bandpass";
+  bp.frequency.value = 850 + Math.random() * 120;
+  bp.Q.value = 0.9;
+  const clickGain = ac.createGain();
+  clickGain.gain.setValueAtTime(0.055, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+  noise.connect(bp).connect(clickGain).connect(masterGain);
+  noise.start(now);
+  noise.stop(now + dur);
+
+  const thud = ac.createOscillator();
+  thud.type = "triangle";
+  thud.frequency.setValueAtTime(145 + Math.random() * 20, now);
+  const thudGain = ac.createGain();
+  thudGain.gain.setValueAtTime(0.018, now);
+  thudGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+  thud.connect(thudGain).connect(masterGain);
+  thud.start(now);
+  thud.stop(now + 0.045);
 }
 
 // ---------- ERROR BEEP ----------

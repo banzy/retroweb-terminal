@@ -18,8 +18,6 @@ import { useEffect } from "react";
 import {
   setSoundFlags,
   setSoundLoudness,
-  playModemHandshake,
-  playErrorBeep,
   type SoundLoudness,
 } from "@/lib/crtSounds";
 
@@ -27,11 +25,10 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Web 1975 — Retro Terminal Website Viewer" },
+      { title: "Wake up Neo" },
       {
         name: "description",
-        content:
-          "View any website as if the web existed in 1975: green phosphor terminal, ASCII art, monospace, scanlines.",
+        content: "Wake up Neo.",
       },
     ],
   }),
@@ -66,13 +63,11 @@ function Index() {
   const [powerAnim, setPowerAnim] = useLocalStorageState<boolean>("w1975.powerAnim", false);
   const [burnIn, setBurnIn] = useLocalStorageState<boolean>("w1975.burnIn", false);
   // Sound toggles
-  const [sndKeyboard, setSndKeyboard] = useLocalStorageState<boolean>("w1975.sndKeyboard", false);
-  const [sndModem, setSndModem] = useLocalStorageState<boolean>("w1975.sndModem", false);
-  const [sndError, setSndError] = useLocalStorageState<boolean>("w1975.sndError", false);
   const [sndToggle, setSndToggle] = useLocalStorageState<boolean>("w1975.sndToggle", false);
+  const [sndAutoType, setSndAutoType] = useLocalStorageState<boolean>("w1975.sndAutoType", false);
   const [soundLoudnessValue, setSoundLoudnessValue] = useLocalStorageState<SoundLoudness>(
     "w1975.soundLoudness",
-    "min",
+    "low",
   );
   const [cabinet, setCabinet] = useLocalStorageState<CabinetId>("w1975.cabinet", "vt100");
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
@@ -109,14 +104,23 @@ function Index() {
   }, [bootSeq]);
 
   useEffect(() => {
+    if (!bootSeq) {
+      setBooting(false);
+    }
+  }, [bootSeq]);
+
+  const shouldShowBootSequence = bootSeq && booting;
+
+  useEffect(() => {
     setSoundFlags({
-      keyboard: sndKeyboard,
-      modem: sndModem,
-      errorBeep: sndError,
+      keyboard: false,
+      modem: false,
+      errorBeep: false,
       toggleClick: sndToggle,
+      autoType: sndAutoType,
     });
     setSoundLoudness(soundLoudnessValue);
-  }, [sndKeyboard, sndModem, sndError, sndToggle, soundLoudnessValue]);
+  }, [sndToggle, sndAutoType, soundLoudnessValue]);
 
   // Apply theme + font CSS vars to <html> so they cascade everywhere
   // immediately (including the boot overlay's pseudo-elements and the
@@ -135,7 +139,6 @@ function Index() {
     setError(null);
     setData(null);
     setStatus(`FETCHING ${url}`);
-    const stopModem = playModemHandshake();
     try {
       const [result] = await Promise.all([
         fetchWebsiteContent(url),
@@ -147,10 +150,8 @@ function Index() {
       const msg = e instanceof Error ? e.message : "UNKNOWN ERROR";
       setError(msg);
       setStatus(`ERROR: ${msg}`);
-      playErrorBeep();
     } finally {
       setLoading(false);
-      stopModem();
     }
   }
 
@@ -174,7 +175,7 @@ function Index() {
         cabinet={cabinet}
         collapsing={collapsing}
         overlay={
-          booting && bootSeq ? (
+          shouldShowBootSequence ? (
             <BootSequence
               delayMs={powerAnim || forcePowerOn ? 1100 : 0}
               onDone={() => {
@@ -183,7 +184,7 @@ function Index() {
               }}
             />
           ) : (
-            <MatrixSequence quote={quote}>
+            <MatrixSequence quote={quote} bloomEnabled={bloom}>
               <SettingsPanel
                 asciiWidth={asciiWidth}
                 setAsciiWidth={setAsciiWidth}
@@ -211,14 +212,10 @@ function Index() {
                 setPowerAnim={setPowerAnim}
                 burnIn={burnIn}
                 setBurnIn={setBurnIn}
-                sndKeyboard={sndKeyboard}
-                setSndKeyboard={setSndKeyboard}
-                sndModem={sndModem}
-                setSndModem={setSndModem}
-                sndError={sndError}
-                setSndError={setSndError}
                 sndToggle={sndToggle}
                 setSndToggle={setSndToggle}
+                sndAutoType={sndAutoType}
+                setSndAutoType={setSndAutoType}
                 soundLoudness={soundLoudnessValue}
                 setSoundLoudness={setSoundLoudnessValue}
                 cabinet={cabinet}
@@ -235,7 +232,7 @@ function Index() {
           )
         }
       >
-        <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
+        <h1 className="sr-only">Wake up Neo</h1>
         {false && <UrlCommandInput onSubmit={handleSubmit} loading={loading} />}
 
         {loading && <LoadingSequence />}

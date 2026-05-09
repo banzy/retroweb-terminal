@@ -276,9 +276,14 @@
     text-shadow: var(--text-glow);
   }
   .crt-cursor::after {
-    content: "_";
+    content: "";
+    display: inline-block;
+    width: 0.45em;
+    height: 1.15em;
+    vertical-align: -0.18em;
+    background: var(--phosphor);
+    box-shadow: var(--text-glow);
     animation: blink 1s step-end infinite;
-    margin-left: 2px;
   }
   @keyframes blink {
     0%, 50% { opacity: 1; }
@@ -412,6 +417,71 @@
   @keyframes matrix-quote-in {
     0%   { opacity: 0; transform: translateY(16px); }
     100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .matrix-phrase-dissolve {
+    animation: matrix-phrase-dissolve 2.4s ease-out forwards;
+  }
+  @keyframes matrix-phrase-dissolve {
+    0%   { opacity: 1; filter: none; }
+    70%  { opacity: 0.25; filter: blur(0.6px); }
+    100% { opacity: 0; filter: blur(1px); }
+  }
+
+  .crt-checkbox {
+    appearance: none;
+    width: 0.85rem;
+    height: 0.85rem;
+    border: 1px solid var(--phosphor-dim);
+    background: transparent;
+    display: inline-grid;
+    place-content: center;
+  }
+  .crt-checkbox::before {
+    content: "";
+    width: 0.48rem;
+    height: 0.48rem;
+    transform: scale(0);
+    transition: transform 90ms ease-out;
+    background: var(--phosphor);
+    clip-path: polygon(14% 44%, 0 65%, 45% 100%, 100% 14%, 80% 0, 40% 64%);
+  }
+  .crt-checkbox:checked::before {
+    transform: scale(1);
+  }
+
+  .crt-range {
+    appearance: none;
+    height: 0.85rem;
+    background: transparent;
+    accent-color: var(--phosphor);
+  }
+  .crt-range::-webkit-slider-runnable-track {
+    height: 1px;
+    background: var(--phosphor);
+    box-shadow: var(--text-glow);
+  }
+  .crt-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-top: -0.33rem;
+    border: 1px solid var(--phosphor);
+    background: var(--phosphor);
+    box-shadow: var(--text-glow);
+  }
+  .crt-range::-moz-range-track {
+    height: 1px;
+    background: var(--phosphor);
+    box-shadow: var(--text-glow);
+  }
+  .crt-range::-moz-range-thumb {
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 1px solid var(--phosphor);
+    border-radius: 0;
+    background: var(--phosphor);
+    box-shadow: var(--text-glow);
   }
 
   /* Convex glass corner highlight — sharper specular spot */

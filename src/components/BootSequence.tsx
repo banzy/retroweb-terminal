@@ -6,13 +6,21 @@ type Props = {
 };
 
 const LINES: Array<{ text: string; pause: number }> = [
-  { text: "WEB-1977 BIOS v0.1.7  (C) 1977 RETROWEB SYSTEMS", pause: 180 },
+  { text: "BIOS v0.1.7  (C) 2026 RETROWEB SYSTEMS", pause: 180 },
   { text: "CPU: PDP-11/45 @ 1.25 MHz   FPU: NONE", pause: 120 },
+  { text: "ROM CHECKSUM: 7F3A...........[ OK ]", pause: 120 },
+  { text: "CLOCK: 60HZ SYNC.............[ OK ]", pause: 120 },
   { text: "", pause: 80 },
   { text: "POST: KEYBOARD................[ OK ]", pause: 140 },
   { text: "POST: SERIAL UART.............[ OK ]", pause: 140 },
   { text: "POST: VIDEO CONTROLLER........[ OK ]", pause: 140 },
-  { text: "POST: TELETYPE INTERFACE......[ OK ]", pause: 140 },
+  { text: "POST: DREAM BUFFER............[ OK ]", pause: 140 },
+  { text: "POST: WHITE RABBIT VECTOR.....[ OK ]", pause: 140 },
+  { text: "", pause: 60 },
+  { text: "LOADING KERNEL IMAGE..........[ OK ]", pause: 120 },
+  { text: "LOADING KERNEL IMAGE..........[ OK ]", pause: 160 },
+  { text: "MOUNTING /DEV/TAPE0...........[ OK ]", pause: 140 },
+  { text: "INITIALIZING TERMINAL MATRIX..[ OK ]", pause: 180 },
   { text: "", pause: 60 },
   { text: "MEMORY TEST:", pause: 100 },
 ];
@@ -61,6 +69,8 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
   const TAIL = [
     `MEMORY OK: ${RAM_TARGET}K`,
     "",
+    "SEEKING BOOT SECTOR..........[ OK ]",
+    "LOADING DREAM STATE..........[ OK ]",
     "BOOTING FROM TAPE 0...",
     "READY.",
   ];
@@ -85,11 +95,17 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
       style={{ background: "var(--effective-bg, var(--crt-bg))" }}
     >
       <div className="max-w-5xl mx-auto px-4 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre">
+        <div>{"\u00a0"}</div>
+        <div>{"\u00a0"}</div>
         {LINES.slice(0, idx).map((l, i) => (
           <div key={`l-${i}`}>{l.text || "\u00a0"}</div>
         ))}
         {(phase === "ram" || phase === "tail") && (
-          <div>{`  ${ram.toString().padStart(3, " ")}K OF ${RAM_TARGET}K ${phase === "tail" ? "OK" : "..."}`}</div>
+          <div>{`  ${ram.toString().padStart(3, " ")}K OF ${RAM_TARGET}K  [${"#"
+            .repeat(Math.round((ram / RAM_TARGET) * 16))
+            .padEnd(16, ".")}] ${Math.round((ram / RAM_TARGET) * 100)
+            .toString()
+            .padStart(3, " ")}% ${phase === "tail" ? "OK" : "..."}`}</div>
         )}
         {phase === "tail" &&
           TAIL.slice(0, tailIdx).map((l, i) => <div key={`t-${i}`}>{l || "\u00a0"}</div>)}

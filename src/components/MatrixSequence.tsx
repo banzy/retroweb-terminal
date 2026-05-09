@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import type { Quote } from "@/lib/quotes";
+import { playAutoTypeTick } from "@/lib/crtSounds";
 
-const PHRASE = "wake up, neo...";
+const PHRASE = "Wake up, Neo...";
 const CHAR_DELAY = 90;
+const QUOTE_CHAR_DELAY = 35;
 const CURSOR_PAUSE = 2000;
 const POST_TYPE_PAUSE = 1200;
 
@@ -10,12 +12,14 @@ type Phase = "cursor" | "typing" | "pause" | "quote";
 
 type Props = {
   quote: Quote;
+  bloomEnabled?: boolean;
   children?: React.ReactNode;
 };
 
-export function MatrixSequence({ quote, children }: Props) {
+export function MatrixSequence({ quote, bloomEnabled = false, children }: Props) {
   const [phase, setPhase] = useState<Phase>("cursor");
   const [displayed, setDisplayed] = useState("");
+  const [quoteDisplayed, setQuoteDisplayed] = useState("");
 
   // Cursor pause → start typing
   useEffect(() => {
@@ -31,10 +35,10 @@ export function MatrixSequence({ quote, children }: Props) {
       setPhase("pause");
       return;
     }
-    const t = window.setTimeout(
-      () => setDisplayed(PHRASE.slice(0, displayed.length + 1)),
-      CHAR_DELAY,
-    );
+    const t = window.setTimeout(() => {
+      playAutoTypeTick();
+      setDisplayed(PHRASE.slice(0, displayed.length + 1));
+    }, CHAR_DELAY);
     return () => window.clearTimeout(t);
   }, [phase, displayed]);
 
@@ -51,6 +55,23 @@ export function MatrixSequence({ quote, children }: Props) {
     "",
     `  -- ${quote.author.toUpperCase()}${quote.tags.length ? `  [${quote.tags.join(", ")}]` : ""}`,
   ].join("\n");
+  const quoteStyle: React.CSSProperties = {
+    whiteSpace: "pre-wrap",
+    overflowWrap: "break-word",
+    lineHeight: "1.7em",
+    ...(bloomEnabled ? {} : { textShadow: "none" }),
+  };
+
+  // Type the quote after the phrase begins dissolving.
+  useEffect(() => {
+    if (phase !== "quote") return;
+    if (quoteDisplayed.length >= quoteBlock.length) return;
+    const t = window.setTimeout(() => {
+      playAutoTypeTick();
+      setQuoteDisplayed(quoteBlock.slice(0, quoteDisplayed.length + 1));
+    }, QUOTE_CHAR_DELAY);
+    return () => window.clearTimeout(t);
+  }, [phase, quoteBlock, quoteDisplayed]);
 
   return (
     <div
@@ -58,6 +79,10 @@ export function MatrixSequence({ quote, children }: Props) {
       style={{ background: "var(--effective-bg, var(--crt-bg))" }}
     >
       <div className="max-w-5xl mx-auto px-4 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre">
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
         {phase === "cursor" && (
           <div className="crt-cursor crt-text text-[var(--phosphor)]">&nbsp;</div>
         )}
@@ -71,24 +96,16 @@ export function MatrixSequence({ quote, children }: Props) {
 
         {phase === "quote" && (
           <>
-            <div>{PHRASE}</div>
-            <pre className="matrix-quote-in ascii-pre text-[var(--phosphor-dim)] whitespace-pre-wrap mt-0">
-              {quoteBlock}
+            <div className="matrix-phrase-dissolve">{PHRASE}</div>
+            <pre className="ascii-pre text-[var(--phosphor)] mt-0 max-w-full" style={quoteStyle}>
+              {quoteDisplayed}
+              <span className="crt-cursor">&nbsp;</span>
             </pre>
           </>
         )}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto px-3 sm:px-6 pb-6">
-        <div className="flex items-center justify-end mb-1">
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent("w1975:reboot"))}
-            className="crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2"
-          >
-            [ REBOOT ]
-          </button>
-        </div>
+      <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto px-3 sm:px-6 pb-12">
         {children}
       </div>
     </div>

@@ -30,14 +30,10 @@ type Props = {
   setPowerAnim: (b: boolean) => void;
   burnIn: boolean;
   setBurnIn: (b: boolean) => void;
-  sndKeyboard: boolean;
-  setSndKeyboard: (b: boolean) => void;
-  sndModem: boolean;
-  setSndModem: (b: boolean) => void;
-  sndError: boolean;
-  setSndError: (b: boolean) => void;
   sndToggle: boolean;
   setSndToggle: (b: boolean) => void;
+  sndAutoType: boolean;
+  setSndAutoType: (b: boolean) => void;
   soundLoudness: SoundLoudness;
   setSoundLoudness: (v: SoundLoudness) => void;
   cabinet: CabinetId;
@@ -78,14 +74,10 @@ export function SettingsPanel({
   setPowerAnim,
   burnIn,
   setBurnIn,
-  sndKeyboard,
-  setSndKeyboard,
-  sndModem,
-  setSndModem,
-  sndError,
-  setSndError,
   sndToggle,
   setSndToggle,
+  sndAutoType,
+  setSndAutoType,
   soundLoudness,
   setSoundLoudness,
   cabinet,
@@ -141,17 +133,26 @@ export function SettingsPanel({
 
   return (
     <div className="border border-[var(--phosphor-dim)] mt-3 text-xs crt-text text-[var(--phosphor-dim)]">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-3 py-2 hover:text-[var(--phosphor)] font-mono"
-      >
-        <span>[{open ? "-" : "+"}] CONFIG :: TERMINAL SETTINGS</span>
-        <span className="text-[var(--phosphor-dim)] hidden sm:inline">
-          THEME={theme.label} | GLASS={glassEnabled ? "ON" : "OFF"} | SCAN=
-          {Math.round(scanlineIntensity * 100)}%
-        </span>
-      </button>
+      <div className="flex items-center">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="flex-1 flex items-center justify-between px-3 py-2 hover:text-[var(--phosphor)] font-mono"
+        >
+          <span>[{open ? "-" : "+"}] CONFIG :: TERMINAL SETTINGS</span>
+          <span className="text-[var(--phosphor-dim)] hidden sm:inline">
+            THEME={theme.label} | GLASS={glassEnabled ? "ON" : "OFF"} | SCAN=
+            {Math.round(scanlineIntensity * 100)}%
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent("w1975:reboot"))}
+          className="px-3 py-2 crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2"
+        >
+          [ REBOOT ]
+        </button>
+      </div>
 
       {open && (
         <div className="border-t border-[var(--phosphor-dim)] p-3 space-y-4">
@@ -349,7 +350,7 @@ export function SettingsPanel({
                   type="checkbox"
                   checked={glassEnabled}
                   onChange={(e) => setGlassEnabled(e.target.checked)}
-                  className="accent-[var(--phosphor)]"
+                  className="crt-checkbox"
                 />
                 ENABLE GLASS
               </label>
@@ -362,7 +363,7 @@ export function SettingsPanel({
                   value={Math.round(glassIntensity * 100)}
                   onChange={(e) => setGlassIntensity(parseInt(e.target.value, 10) / 100)}
                   disabled={!glassEnabled}
-                  className="flex-1 accent-[var(--phosphor)]"
+                  className="crt-range flex-1"
                 />
                 <span className="w-10 text-right text-[var(--phosphor)]">
                   {Math.round(glassIntensity * 100)}%
@@ -383,20 +384,11 @@ export function SettingsPanel({
                   max={100}
                   value={Math.round(bgTint * 100)}
                   onChange={(e) => setBgTint(parseInt(e.target.value, 10) / 100)}
-                  className="flex-1 accent-[var(--phosphor)]"
+                  className="crt-range flex-1"
                 />
                 <span className="w-10 text-right text-[var(--phosphor)]">
                   {Math.round(bgTint * 100)}%
                 </span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={bgRadial}
-                  onChange={(e) => setBgRadial(e.target.checked)}
-                  className="accent-[var(--phosphor)]"
-                />
-                BG_RADIAL VIGNETTE
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -406,7 +398,7 @@ export function SettingsPanel({
                     playToggleClick();
                     setBootSeq(e.target.checked);
                   }}
-                  className="accent-[var(--phosphor)]"
+                  className="crt-checkbox"
                 />
                 BOOT_SEQUENCE
               </label>
@@ -414,7 +406,7 @@ export function SettingsPanel({
           </div>
 
           {/* Ascii width */}
-          <div className="flex items-center gap-2">
+          <div className="hidden">
             <span className="text-[var(--phosphor)]">&gt; ASCII_WIDTH=</span>
             <select
               value={asciiWidth}
@@ -439,27 +431,7 @@ export function SettingsPanel({
             </button>
             {advOpen && (
               <div className="mt-3 space-y-2">
-                <ToggleRow label="SCREEN_CURVATURE" checked={curvature} onChange={setCurvature} />
-                <label className="flex items-center gap-2">
-                  <span className="w-40">RGB_SPLIT=</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={Math.round(rgbSplit * 100)}
-                    onChange={(e) => setRgbSplit(parseInt(e.target.value, 10) / 100)}
-                    className="flex-1 accent-[var(--phosphor)]"
-                  />
-                  <span className="w-10 text-right text-[var(--phosphor)]">
-                    {rgbSplit <= 0 ? "OFF" : `${Math.round(rgbSplit * 100)}%`}
-                  </span>
-                </label>
                 <ToggleRow label="BLOOM_HALATION" checked={bloom} onChange={setBloom} />
-                <ToggleRow
-                  label="TRACKING_GLITCH"
-                  checked={trackingGlitch}
-                  onChange={setTrackingGlitch}
-                />
                 <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
                 <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
                 <div className="border-t border-[var(--phosphor-dim)] pt-2 mt-2">
@@ -480,13 +452,7 @@ export function SettingsPanel({
                       </button>
                     ))}
                   </div>
-                  <ToggleRow
-                    label="KEYBOARD_CLACK"
-                    checked={sndKeyboard}
-                    onChange={setSndKeyboard}
-                  />
-                  <ToggleRow label="MODEM_HANDSHAKE" checked={sndModem} onChange={setSndModem} />
-                  <ToggleRow label="ERROR_BEEP" checked={sndError} onChange={setSndError} />
+                  <ToggleRow label="AUTO_TYPE" checked={sndAutoType} onChange={setSndAutoType} />
                   <ToggleRow label="TOGGLE_CLICK" checked={sndToggle} onChange={setSndToggle} />
                 </div>
               </div>
@@ -516,7 +482,7 @@ function ToggleRow({
           playToggleClick();
           onChange(e.target.checked);
         }}
-        className="accent-[var(--phosphor)]"
+        className="crt-checkbox"
       />
       <span className="w-40">{label}</span>
       <span className="text-[var(--phosphor)]">{checked ? "ON" : "OFF"}</span>
