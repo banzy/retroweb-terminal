@@ -185,13 +185,6 @@ export function SettingsPanel({
         </button>
         <button
           type="button"
-          onClick={onRestoreDefaultConfig}
-          className="px-3 py-2 crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2"
-        >
-          [ DEFAULT ]
-        </button>
-        <button
-          type="button"
           onClick={() => window.dispatchEvent(new CustomEvent("w1975:reboot"))}
           className="px-3 py-2 crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2"
         >
@@ -249,6 +242,13 @@ export function SettingsPanel({
                       className="border border-[var(--phosphor-dim)] px-2 py-1 font-mono text-xs text-[var(--phosphor)]"
                     >
                       {isCustom ? "[*]" : "[ ]"} CUSTOM
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onRestoreDefaultConfig}
+                      className="border border-[var(--phosphor-dim)] px-2 py-1 font-mono text-xs text-[var(--phosphor-dim)] hover:text-[var(--phosphor)]"
+                    >
+                      [ DEFAULT ]
                     </button>
                   </div>
                 </div>
