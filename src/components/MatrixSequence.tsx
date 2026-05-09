@@ -5,8 +5,9 @@ import { playAutoTypeTick } from "@/lib/crtSounds";
 const PHRASE = "Wake up, Neo...";
 const CHAR_DELAY = 90;
 const QUOTE_CHAR_DELAY = 35;
-const CURSOR_PAUSE = 2000;
-const POST_TYPE_PAUSE = 1200;
+const CURSOR_PAUSE = 3000;
+/** Pause after the phrase finishes, before the quote appears (ms). */
+const POST_TYPE_PAUSE = 4000;
 
 type Phase = "cursor" | "typing" | "pause" | "quote";
 
@@ -49,12 +50,7 @@ export function MatrixSequence({ quote, bloomEnabled = false, children }: Props)
     return () => window.clearTimeout(t);
   }, [phase]);
 
-  const quoteBlock = [
-    "",
-    `"${quote.quote}"`,
-    "",
-    `  -- ${quote.author.toUpperCase()}`,
-  ].join("\n");
+  const quoteBlock = ["", `"${quote.quote}"`, "", `  -- ${quote.author.toUpperCase()}`].join("\n");
   const quoteStyle: React.CSSProperties = {
     whiteSpace: "pre-wrap",
     overflowWrap: "break-word",
