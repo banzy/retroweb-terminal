@@ -4,14 +4,14 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-/** Production asset + router prefix when the app is not at the domain root (e.g. /retroweb/). Override with VITE_DEPLOY_BASE=/ for root hosting. */
+/** Production asset + router prefix when the app is not at the domain root (e.g. /wakeup/). Override with VITE_DEPLOY_BASE=/ for root hosting. */
 function deployBasePath(): string {
   const raw = process.env.VITE_DEPLOY_BASE;
   if (raw !== undefined) {
     if (raw === "" || raw === "/") return "/";
     return raw.endsWith("/") ? raw : `${raw}/`;
   }
-  return "/retroweb/";
+  return "/wakeup/";
 }
 
 export default defineConfig(({ command }) => ({
