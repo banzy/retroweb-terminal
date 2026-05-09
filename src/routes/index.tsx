@@ -16,6 +16,7 @@ import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/
 import { FONTS, getFontCssVars, type FontId } from "@/lib/crtFonts";
 import { useEffect } from "react";
 import {
+  initAudioContext,
   playRebootChime,
   rebootChimeEnabled,
   setSoundFlags,
@@ -149,6 +150,10 @@ function Index() {
   }, [bootSeq]);
 
   const shouldShowBootSequence = bootSeq && booting;
+
+  useEffect(() => {
+    initAudioContext();
+  }, []);
 
   useEffect(() => {
     setSoundFlags({

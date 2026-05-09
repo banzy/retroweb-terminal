@@ -46,6 +46,20 @@ function getCtx(): AudioContext | null {
   return ctx;
 }
 
+// Call once on app mount. Creates the AudioContext early and registers a
+// one-time interaction listener so the context is resumed on the very first
+// user gesture, before any sound is requested.
+export function initAudioContext() {
+  if (typeof window === "undefined") return;
+  const resume = () => {
+    getCtx(); // ensures context exists and calls resume()
+    window.removeEventListener("pointerdown", resume);
+    window.removeEventListener("keydown", resume);
+  };
+  window.addEventListener("pointerdown", resume, { once: true });
+  window.addEventListener("keydown", resume, { once: true });
+}
+
 export function setSoundFlags(next: Partial<SoundFlags>) {
   flags = { ...flags, ...next };
 }
