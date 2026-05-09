@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { isValidUrl, normalizeUrl } from "@/lib/urlUtils";
-import { playKeyClack } from "@/lib/crtSounds";
 
 type Props = {
   onSubmit: (url: string) => void;
@@ -30,7 +29,6 @@ export function UrlCommandInput({ onSubmit, loading }: Props) {
             type="text"
             value={value}
             onChange={(e) => {
-              if (e.target.value.length !== value.length) playKeyClack();
               setValue(e.target.value);
             }}
             onFocus={() => setFocused(true)}

@@ -11,6 +11,7 @@ import { BootSequence } from "@/components/BootSequence";
 import { fetchWebsiteContent } from "@/lib/fetchWebsite";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { getRandomQuote } from "@/lib/quotes";
+import { MatrixSequence } from "@/components/MatrixSequence";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import { FONTS, getFontStack, type FontId } from "@/lib/crtFonts";
 import { useEffect } from "react";
@@ -173,8 +174,7 @@ function Index() {
         cabinet={cabinet}
         collapsing={collapsing}
         overlay={
-          booting &&
-          bootSeq && (
+          booting && bootSeq ? (
             <BootSequence
               delayMs={powerAnim || forcePowerOn ? 1100 : 0}
               onDone={() => {
@@ -182,58 +182,61 @@ function Index() {
                 setForcePowerOn(false);
               }}
             />
+          ) : (
+            <MatrixSequence quote={quote}>
+              <SettingsPanel
+                asciiWidth={asciiWidth}
+                setAsciiWidth={setAsciiWidth}
+                theme={theme}
+                setTheme={setTheme}
+                glassEnabled={glassEnabled}
+                setGlassEnabled={setGlassEnabled}
+                glassIntensity={glassIntensity}
+                setGlassIntensity={setGlassIntensity}
+                scanlineIntensity={scanlineIntensity}
+                setScanlineIntensity={setScanlineIntensity}
+                bgTint={bgTint}
+                setBgTint={setBgTint}
+                bgRadial={bgRadial}
+                setBgRadial={setBgRadial}
+                curvature={curvature}
+                setCurvature={setCurvature}
+                rgbSplit={rgbSplit}
+                setRgbSplit={setRgbSplit}
+                bloom={bloom}
+                setBloom={setBloom}
+                trackingGlitch={trackingGlitch}
+                setTrackingGlitch={setTrackingGlitch}
+                powerAnim={powerAnim}
+                setPowerAnim={setPowerAnim}
+                burnIn={burnIn}
+                setBurnIn={setBurnIn}
+                sndKeyboard={sndKeyboard}
+                setSndKeyboard={setSndKeyboard}
+                sndModem={sndModem}
+                setSndModem={setSndModem}
+                sndError={sndError}
+                setSndError={setSndError}
+                sndToggle={sndToggle}
+                setSndToggle={setSndToggle}
+                soundLoudness={soundLoudnessValue}
+                setSoundLoudness={setSoundLoudnessValue}
+                cabinet={cabinet}
+                setCabinet={setCabinet}
+                savedThemes={savedThemes}
+                setSavedThemes={setSavedThemes}
+                bootSeq={bootSeq}
+                setBootSeq={setBootSeq}
+                fontId={fontId}
+                setFontId={setFontId}
+                fonts={FONTS}
+              />
+            </MatrixSequence>
           )
         }
       >
         <h1 className="sr-only">Web 1975 — Retro Terminal Website Viewer</h1>
-        <UrlCommandInput onSubmit={handleSubmit} loading={loading} />
-        <SettingsPanel
-          asciiWidth={asciiWidth}
-          setAsciiWidth={setAsciiWidth}
-          theme={theme}
-          setTheme={setTheme}
-          glassEnabled={glassEnabled}
-          setGlassEnabled={setGlassEnabled}
-          glassIntensity={glassIntensity}
-          setGlassIntensity={setGlassIntensity}
-          scanlineIntensity={scanlineIntensity}
-          setScanlineIntensity={setScanlineIntensity}
-          bgTint={bgTint}
-          setBgTint={setBgTint}
-          bgRadial={bgRadial}
-          setBgRadial={setBgRadial}
-          curvature={curvature}
-          setCurvature={setCurvature}
-          rgbSplit={rgbSplit}
-          setRgbSplit={setRgbSplit}
-          bloom={bloom}
-          setBloom={setBloom}
-          trackingGlitch={trackingGlitch}
-          setTrackingGlitch={setTrackingGlitch}
-          powerAnim={powerAnim}
-          setPowerAnim={setPowerAnim}
-          burnIn={burnIn}
-          setBurnIn={setBurnIn}
-          sndKeyboard={sndKeyboard}
-          setSndKeyboard={setSndKeyboard}
-          sndModem={sndModem}
-          setSndModem={setSndModem}
-          sndError={sndError}
-          setSndError={setSndError}
-          sndToggle={sndToggle}
-          setSndToggle={setSndToggle}
-          soundLoudness={soundLoudnessValue}
-          setSoundLoudness={setSoundLoudnessValue}
-          cabinet={cabinet}
-          setCabinet={setCabinet}
-          savedThemes={savedThemes}
-          setSavedThemes={setSavedThemes}
-          bootSeq={bootSeq}
-          setBootSeq={setBootSeq}
-          fontId={fontId}
-          setFontId={setFontId}
-          fonts={FONTS}
-        />
+        {false && <UrlCommandInput onSubmit={handleSubmit} loading={loading} />}
 
         {loading && <LoadingSequence />}
 

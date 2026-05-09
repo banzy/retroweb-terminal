@@ -395,6 +395,25 @@
     100% { filter: brightness(1); }
   }
 
+  /* Matrix sequence animations */
+  .matrix-rise {
+    animation: matrix-rise 4s ease-in-out forwards;
+  }
+  @keyframes matrix-rise {
+    0%   { opacity: 0; transform: translateY(40px); }
+    25%  { opacity: 1; transform: translateY(0); }
+    75%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-8px); }
+  }
+
+  .matrix-quote-in {
+    animation: matrix-quote-in 1.6s ease-out forwards;
+  }
+  @keyframes matrix-quote-in {
+    0%   { opacity: 0; transform: translateY(16px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
   /* Convex glass corner highlight — sharper specular spot */
   .crt-corner-highlight {
     position: fixed;
