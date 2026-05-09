@@ -31,16 +31,6 @@ export function getFontStack(id: FontId): string {
   return (FONTS.find((f) => f.id === id) ?? FONTS[0]).stack;
 }
 
-export function getFontScale(id: FontId): number {
-  return 1;
-}
-
 export function getFontCssVars(id: FontId): Record<string, string> {
-  const scale = getFontScale(id);
-  return {
-    "--terminal-font": getFontStack(id),
-    "--text-xs": `${0.75 * scale}rem`,
-    "--text-sm": `${0.875 * scale}rem`,
-    "--text-base": `${scale}rem`,
-  };
+  return { "--terminal-font": getFontStack(id) };
 }

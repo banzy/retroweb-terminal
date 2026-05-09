@@ -11,7 +11,7 @@ import { BootSequence } from "@/components/BootSequence";
 import { fetchWebsiteContent } from "@/lib/fetchWebsite";
 import type { ParsedWebsite } from "@/lib/parseWebsiteHtml";
 import { getRandomQuote } from "@/lib/quotes";
-import { MatrixSequence } from "@/components/MatrixSequence";
+import { MatrixSequence, NEXT_QUOTE_DELAY } from "@/components/MatrixSequence";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import { FONTS, getFontCssVars, type FontId } from "@/lib/crtFonts";
 import { useEffect } from "react";
@@ -87,7 +87,8 @@ function Index() {
   const [savedThemes, setSavedThemes] = useLocalStorageState<CrtTheme[]>("w1975.savedThemes", []);
   const [bootSeq, setBootSeq] = useLocalStorageState<boolean>("w1975.bootSeq", DEFAULT_CONFIG.bootSeq);
   const [fontId, setFontId] = useLocalStorageState<FontId>("w1975.fontId", DEFAULT_CONFIG.fontId);
-  const [quote] = useState(() => getRandomQuote());
+  const [quote, setQuote] = useState(() => getRandomQuote());
+  const [skippingQuote, setSkippingQuote] = useState(false);
   const [booting, setBooting] = useState(bootSeq);
   const [rebootKey, setRebootKey] = useState(0);
   const [forcePowerOn, setForcePowerOn] = useState(false);
@@ -226,7 +227,7 @@ function Index() {
               }}
             />
           ) : (
-            <MatrixSequence quote={quote} bloomEnabled={bloom}>
+            <MatrixSequence quote={quote} bloomEnabled={bloom} skipping={skippingQuote}>
               <SettingsPanel
                 asciiWidth={asciiWidth}
                 setAsciiWidth={setAsciiWidth}
@@ -272,6 +273,14 @@ function Index() {
                 setFontId={setFontId}
                 fonts={FONTS}
                 onRestoreDefaultConfig={restoreDefaultConfig}
+                onNextQuote={() => {
+                  setSkippingQuote(true);
+                  window.setTimeout(() => {
+                    setQuote(getRandomQuote());
+                    setSkippingQuote(false);
+                  }, NEXT_QUOTE_DELAY);
+                }}
+                nextQuoteDisabled={skippingQuote}
               />
             </MatrixSequence>
           )

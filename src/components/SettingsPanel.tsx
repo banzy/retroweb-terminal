@@ -49,6 +49,8 @@ type Props = {
   setFontId: (id: FontId) => void;
   fonts: CrtFont[];
   onRestoreDefaultConfig: () => void;
+  onNextQuote?: () => void;
+  nextQuoteDisabled?: boolean;
 };
 
 export function SettingsPanel({
@@ -96,6 +98,8 @@ export function SettingsPanel({
   setFontId,
   fonts,
   onRestoreDefaultConfig,
+  onNextQuote,
+  nextQuoteDisabled,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [themesOpen, setThemesOpen] = useState(false);
@@ -193,6 +197,16 @@ export function SettingsPanel({
         >
           [ REBOOT ]
         </button>
+        {onNextQuote && (
+          <button
+            type="button"
+            disabled={nextQuoteDisabled}
+            onClick={onNextQuote}
+            className="px-3 py-2 crt-text text-[var(--phosphor-dim)] hover:text-[var(--phosphor)] font-mono text-xs underline underline-offset-2 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            [ NEXT QUOTE ]
+          </button>
+        )}
       </div>
 
       {open && (

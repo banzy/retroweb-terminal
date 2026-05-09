@@ -1,26 +1,30 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Quote } from "@/lib/quotes";
 import { playAutoTypeTick } from "@/lib/crtSounds";
 
 const PHRASE = "Wake up, Neo...";
-const CHAR_DELAY = 35;
-const QUOTE_CHAR_DELAY = 30;
+const CHAR_DELAY = 36;
+const QUOTE_CHAR_DELAY = 36;
 const CURSOR_PAUSE = 2400;
 /** Pause after the phrase finishes, before the quote appears (ms). */
 const POST_TYPE_PAUSE = 3200;
+/** Delay between dismissing the current quote and showing the next one (ms). */
+export const NEXT_QUOTE_DELAY = 2000;
 
 type Phase = "cursor" | "typing" | "pause" | "quote";
 
 type Props = {
   quote: Quote;
   bloomEnabled?: boolean;
+  skipping?: boolean;
   children?: React.ReactNode;
 };
 
-export function MatrixSequence({ quote, bloomEnabled = false, children }: Props) {
+export function MatrixSequence({ quote, bloomEnabled = false, skipping = false, children }: Props) {
   const [phase, setPhase] = useState<Phase>("cursor");
   const [displayed, setDisplayed] = useState("");
   const [quoteDisplayed, setQuoteDisplayed] = useState("");
+  const prevQuoteId = useRef(quote.id);
 
   // Cursor pause → start typing
   useEffect(() => {
@@ -63,6 +67,13 @@ export function MatrixSequence({ quote, bloomEnabled = false, children }: Props)
     lineHeight: "1.7em",
     ...(bloomEnabled ? {} : { textShadow: "none" }),
   };
+
+  // When the parent provides a new quote, reset typing state.
+  useEffect(() => {
+    if (quote.id === prevQuoteId.current) return;
+    prevQuoteId.current = quote.id;
+    setQuoteDisplayed("");
+  }, [quote]);
 
   // Type the quote after the phrase begins dissolving.
   useEffect(() => {
@@ -107,9 +118,16 @@ export function MatrixSequence({ quote, bloomEnabled = false, children }: Props)
         {phase === "quote" && (
           <>
             <div className="matrix-phrase-dissolve">{PHRASE}</div>
-            <pre className="ascii-pre text-[var(--phosphor)] mt-0 max-w-full" style={quoteStyle}>
+            <pre
+              className="ascii-pre text-[var(--phosphor)] mt-0 max-w-full"
+              style={{
+                ...quoteStyle,
+                transition: skipping ? `opacity ${NEXT_QUOTE_DELAY}ms linear` : "none",
+                opacity: skipping ? 0 : 1,
+              }}
+            >
               {quoteDisplayed}
-              <span className="crt-cursor">&nbsp;</span>
+              {!skipping && <span className="crt-cursor">&nbsp;</span>}
             </pre>
           </>
         )}
