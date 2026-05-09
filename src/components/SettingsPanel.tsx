@@ -98,7 +98,6 @@ export function SettingsPanel({
   onRestoreDefaultConfig,
 }: Props) {
   const [open, setOpen] = useState(false);
-  const [advOpen, setAdvOpen] = useState(false);
   const [themesOpen, setThemesOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
   const isCustom = theme.id === "custom";
@@ -451,6 +450,39 @@ export function SettingsPanel({
                 />
                 BOOT_SEQUENCE
               </label>
+              <ToggleRow label="BLOOM_HALATION" checked={bloom} onChange={setBloom} />
+              <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
+              <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
+
+              <div className="border-t border-[var(--phosphor-dim)] pt-2 mt-2">
+                <div className="mb-2 text-[var(--phosphor)]">&gt; SOUND:</div>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="w-40">LOUDNESS</span>
+                  {(["low", "med", "high"] as const).map((level) => (
+                    <button
+                      key={level}
+                      type="button"
+                      onClick={() => {
+                        setSoundLoudness(level);
+                        playToggleClick();
+                      }}
+                      className="border border-[var(--phosphor-dim)] text-[var(--phosphor)] px-2 py-1 font-mono text-xs hover:border-[var(--phosphor)]"
+                    >
+                      {soundLoudness === level ? "[*]" : "[ ]"} {level.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+                <ToggleRow label="AUTO_TYPE" checked={sndAutoType} onChange={setSndAutoType} />
+                <ToggleRow label="TOGGLE_CLICK" checked={sndToggle} onChange={setSndToggle} />
+                <ToggleRow
+                  label="REBOOT_SOUND"
+                  checked={sndReboot}
+                  onChange={(v) => {
+                    setSndReboot(v);
+                    if (v) playRebootChime();
+                  }}
+                />
+              </div>
             </div>
           </div>
 
@@ -469,52 +501,6 @@ export function SettingsPanel({
             </select>
           </div>
 
-          {/* Advanced */}
-          <div className="border-t border-[var(--phosphor-dim)] pt-3">
-            <button
-              type="button"
-              onClick={() => setAdvOpen((v) => !v)}
-              className="text-[var(--phosphor)] hover:text-[var(--phosphor-bright)] font-mono"
-            >
-              [{advOpen ? "-" : "+"}] ADVANCED CRT EFFECTS
-            </button>
-            {advOpen && (
-              <div className="mt-3 space-y-2">
-                <ToggleRow label="BLOOM_HALATION" checked={bloom} onChange={setBloom} />
-                <ToggleRow label="POWER_ON_ANIM" checked={powerAnim} onChange={setPowerAnim} />
-                <ToggleRow label="BURN_IN_GHOST" checked={burnIn} onChange={setBurnIn} />
-                <div className="border-t border-[var(--phosphor-dim)] pt-2 mt-2">
-                  <div className="mb-2 text-[var(--phosphor)]">&gt; SOUND:</div>
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="w-40">LOUDNESS</span>
-                    {(["low", "med", "high"] as const).map((level) => (
-                      <button
-                        key={level}
-                        type="button"
-                        onClick={() => {
-                          setSoundLoudness(level);
-                          playToggleClick();
-                        }}
-                        className="border border-[var(--phosphor-dim)] text-[var(--phosphor)] px-2 py-1 font-mono text-xs hover:border-[var(--phosphor)]"
-                      >
-                        {soundLoudness === level ? "[*]" : "[ ]"} {level.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-                  <ToggleRow label="AUTO_TYPE" checked={sndAutoType} onChange={setSndAutoType} />
-                  <ToggleRow label="TOGGLE_CLICK" checked={sndToggle} onChange={setSndToggle} />
-                  <ToggleRow
-                    label="REBOOT_SOUND"
-                    checked={sndReboot}
-                    onChange={(v) => {
-                      setSndReboot(v);
-                      if (v) playRebootChime();
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       )}
     </div>
