@@ -132,6 +132,7 @@ function Index() {
         setError(null);
         setLoading(false);
         setStatus("READY");
+        setQuote(getRandomQuote());
         setRebootKey((k) => k + 1);
         requestAnimationFrame(() => {
           window.scrollTo({ top: y, left: 0, behavior: "auto" });
