@@ -19,10 +19,20 @@ type Props = {
   quote: Quote;
   bloomEnabled?: boolean;
   skipping?: boolean;
+  /** Tap / click the finished quote to advance (e.g. mobile when CONFIG bar is hidden). */
+  onNextQuote?: () => void;
+  nextQuoteDisabled?: boolean;
   children?: React.ReactNode;
 };
 
-export function MatrixSequence({ quote, bloomEnabled = false, skipping = false, children }: Props) {
+export function MatrixSequence({
+  quote,
+  bloomEnabled = false,
+  skipping = false,
+  onNextQuote,
+  nextQuoteDisabled = false,
+  children,
+}: Props) {
   const [phase, setPhase] = useState<Phase>("cursor");
   const [displayed, setDisplayed] = useState("");
   const [quoteDisplayed, setQuoteDisplayed] = useState("");
@@ -107,14 +117,15 @@ export function MatrixSequence({ quote, bloomEnabled = false, skipping = false, 
     playAutoTypeTick();
   }, [quoteDisplayed, phase]);
 
+  const quoteComplete = phase === "quote" && quoteDisplayed.length >= quoteBlock.length;
+  const quoteInteractive = Boolean(onNextQuote && quoteComplete && !skipping && !nextQuoteDisabled);
+
   return (
     <div
       className="absolute inset-0 z-[50] overflow-hidden"
       style={{ background: "var(--effective-bg, var(--crt-bg))" }}
     >
-      <div className="max-w-5xl mx-auto px-4 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre">
-        <div>&nbsp;</div>
-        <div>&nbsp;</div>
+      <div className="max-w-5xl mx-auto px-5 sm:px-6 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre">
         <div>&nbsp;</div>
         <div>&nbsp;</div>
         {phase === "cursor" && (
@@ -132,11 +143,29 @@ export function MatrixSequence({ quote, bloomEnabled = false, skipping = false, 
           <>
             <div className="matrix-phrase-dissolve">{PHRASE}</div>
             <pre
-              className="ascii-pre text-[var(--phosphor)] mt-0 max-w-full"
+              className={`ascii-pre text-[var(--phosphor)] mt-0 max-w-full ${
+                quoteInteractive
+                  ? "cursor-pointer hover:text-[var(--phosphor-bright)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--phosphor)] focus-visible:ring-inset"
+                  : ""
+              }`}
               style={{
                 ...quoteStyle,
                 transition: skipping ? `opacity ${NEXT_QUOTE_DELAY}ms linear` : "none",
                 opacity: skipping ? 0 : 1,
+              }}
+              role={quoteInteractive ? "button" : undefined}
+              tabIndex={quoteInteractive ? 0 : undefined}
+              aria-label={quoteInteractive ? "Show another quote" : undefined}
+              onClick={() => {
+                if (!quoteInteractive || !onNextQuote) return;
+                onNextQuote();
+              }}
+              onKeyDown={(e) => {
+                if (!quoteInteractive || !onNextQuote) return;
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onNextQuote();
+                }
               }}
             >
               {quoteDisplayed}
@@ -146,7 +175,7 @@ export function MatrixSequence({ quote, bloomEnabled = false, skipping = false, 
         )}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto px-3 sm:px-6 pb-12">
+      <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto px-3 sm:px-6 pb-12 hidden sm:block [@media(min-width:640px)_and_(orientation:landscape)_and_(max-height:500px)]:!hidden">
         {children}
       </div>
     </div>

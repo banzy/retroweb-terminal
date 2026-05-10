@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TerminalShell } from "@/components/TerminalShell";
 import { useLocalStorageState } from "@/hooks/useLocalStorageState";
+import { useCompactMobile, matchesCompactMobile } from "@/hooks/useCompactMobile";
 import { UrlCommandInput } from "@/components/UrlCommandInput";
 import { LoadingSequence } from "@/components/LoadingSequence";
 import { TerminalOutput } from "@/components/TerminalOutput";
@@ -14,7 +15,6 @@ import { getRandomQuote } from "@/lib/quotes";
 import { MatrixSequence, NEXT_QUOTE_DELAY } from "@/components/MatrixSequence";
 import { applyThemeVars, PRESET_THEMES, type CrtTheme, type CabinetId } from "@/lib/crtThemes";
 import { FONTS, getFontCssVars, type FontId } from "@/lib/crtFonts";
-import { useEffect } from "react";
 import {
   initAudioContext,
   playRebootChime,
@@ -67,6 +67,13 @@ function Index() {
   const [status, setStatus] = useState("READY");
   const [asciiWidth, setAsciiWidth] = useLocalStorageState<number>("w1975.asciiWidth", DEFAULT_CONFIG.asciiWidth);
   const [theme, setTheme] = useLocalStorageState<CrtTheme>("w1975.theme", DEFAULT_CONFIG.theme);
+  const [mobilePresetRoll] = useState<CrtTheme | null>(() =>
+    typeof window !== "undefined" && matchesCompactMobile()
+      ? PRESET_THEMES[Math.floor(Math.random() * PRESET_THEMES.length)]!
+      : null,
+  );
+  const isCompactMobile = useCompactMobile();
+  const effectiveTheme = isCompactMobile && mobilePresetRoll ? mobilePresetRoll : theme;
   const [glassEnabled, setGlassEnabled] = useLocalStorageState<boolean>("w1975.glassEnabled", DEFAULT_CONFIG.glassEnabled);
   const [glassIntensity, setGlassIntensity] = useLocalStorageState<number>("w1975.glassIntensity", DEFAULT_CONFIG.glassIntensity);
   const [scanlineIntensity, setScanlineIntensity] = useLocalStorageState<number>("w1975.scanlineIntensity", DEFAULT_CONFIG.scanlineIntensity);
@@ -173,7 +180,7 @@ function Index() {
   // very first paint), not only inside the TerminalShell subtree.
   useEffect(() => {
     const root = document.documentElement;
-    const vars = applyThemeVars(theme) as Record<string, string>;
+    const vars = applyThemeVars(effectiveTheme) as Record<string, string>;
     for (const [k, v] of Object.entries(vars)) {
       if (k.startsWith("--")) root.style.setProperty(k, String(v));
     }
@@ -181,7 +188,15 @@ function Index() {
     for (const [k, v] of Object.entries(fontVars)) {
       root.style.setProperty(k, v);
     }
-  }, [theme, fontId]);
+  }, [effectiveTheme, fontId]);
+
+  function advanceToNextQuote() {
+    setSkippingQuote(true);
+    window.setTimeout(() => {
+      setQuote(getRandomQuote());
+      setSkippingQuote(false);
+    }, NEXT_QUOTE_DELAY);
+  }
 
   async function handleSubmit(url: string) {
     setLoading(true);
@@ -208,10 +223,10 @@ function Index() {
     <>
       <TerminalShell
         key={rebootKey}
-        style={{ ...applyThemeVars(theme), ...getFontCssVars(fontId) }}
+        style={{ ...applyThemeVars(effectiveTheme), ...getFontCssVars(fontId) }}
         glassEnabled={glassEnabled}
         glassIntensity={glassIntensity}
-        themeLabel={theme.label}
+        themeLabel={effectiveTheme.label}
         scanlineIntensity={scanlineIntensity}
         bgTint={bgTint}
         bgRadial={bgRadial}
@@ -221,7 +236,7 @@ function Index() {
         trackingGlitch={trackingGlitch}
         powerAnim={powerAnim || forcePowerOn}
         burnIn={burnIn}
-        cabinet={cabinet}
+        cabinet={isCompactMobile ? "none" : cabinet}
         collapsing={collapsing}
         overlay={
           shouldShowBootSequence ? (
@@ -233,7 +248,13 @@ function Index() {
               }}
             />
           ) : (
-            <MatrixSequence quote={quote} bloomEnabled={bloom} skipping={skippingQuote}>
+            <MatrixSequence
+              quote={quote}
+              bloomEnabled={bloom}
+              skipping={skippingQuote}
+              onNextQuote={advanceToNextQuote}
+              nextQuoteDisabled={skippingQuote}
+            >
               <SettingsPanel
                 asciiWidth={asciiWidth}
                 setAsciiWidth={setAsciiWidth}
@@ -279,13 +300,7 @@ function Index() {
                 setFontId={setFontId}
                 fonts={FONTS}
                 onRestoreDefaultConfig={restoreDefaultConfig}
-                onNextQuote={() => {
-                  setSkippingQuote(true);
-                  window.setTimeout(() => {
-                    setQuote(getRandomQuote());
-                    setSkippingQuote(false);
-                  }, NEXT_QUOTE_DELAY);
-                }}
+                onNextQuote={advanceToNextQuote}
                 nextQuoteDisabled={skippingQuote}
               />
             </MatrixSequence>

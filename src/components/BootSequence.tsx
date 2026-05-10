@@ -102,7 +102,7 @@ export function BootSequence({ onDone, delayMs = 0 }: Props) {
       style={{ background: "var(--effective-bg, var(--crt-bg))" }}
     >
       <div
-        className={`max-w-5xl mx-auto px-4 py-6 crt-text text-[var(--phosphor)] text-sm font-mono whitespace-pre ${phase === "hold" ? "boot-dissolve" : ""}`}
+        className={`max-w-5xl mx-auto py-6 px-5 sm:px-6 crt-text text-[var(--phosphor)] text-[calc(8px*1.2)] leading-none tracking-tight sm:text-sm sm:leading-normal sm:tracking-normal font-mono whitespace-pre ${phase === "hold" ? "boot-dissolve" : ""}`}
       >
         <div>{"\u00a0"}</div>
         <div>{"\u00a0"}</div>

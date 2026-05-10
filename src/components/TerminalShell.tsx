@@ -82,10 +82,10 @@ export function TerminalShell({
         </svg>
       )}
       <div
-        className={`crt-curve-inner max-w-5xl mx-auto px-3 sm:px-6 py-6 relative z-10 ${collapsing ? "crt-power-off" : powerOnAtMount ? "crt-power-on" : ""}`}
+        className={`crt-curve-inner max-w-5xl mx-auto px-5 sm:px-6 py-6 relative z-10 ${collapsing ? "crt-power-off" : powerOnAtMount ? "crt-power-on" : ""}`}
       >
-        <header className="border border-[var(--phosphor)] p-3 mb-4 flex items-start justify-between gap-3">
-          <div>
+        <header className="border border-[var(--phosphor)] p-3 mb-4 flex flex-wrap items-start justify-between gap-3 box-border min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="crt-text text-[var(--phosphor-bright)] font-bold tracking-wider text-sm sm:text-base">
               WEB 1975 TERMINAL EMULATOR
             </div>

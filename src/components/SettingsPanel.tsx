@@ -144,10 +144,18 @@ export function SettingsPanel({
   return (
     <div className="border border-[var(--phosphor-dim)] mt-3 text-xs crt-text text-[var(--phosphor-dim)] font-mono">
       <div className="flex items-center">
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
+          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex-1 flex items-center justify-between px-3 py-2 hover:text-[var(--phosphor)] font-mono"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setOpen((v) => !v);
+            }
+          }}
+          className="flex-1 flex items-center justify-between px-3 py-2 hover:text-[var(--phosphor)] font-mono cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-[var(--phosphor)]"
         >
           <span>[{open ? "-" : "+"}] CONFIG</span>
           <span className="flex items-center gap-2 ml-3">
@@ -179,7 +187,7 @@ export function SettingsPanel({
               custom
             </button>
           </span>
-        </button>
+        </div>
         <button
           type="button"
           onClick={() => {
