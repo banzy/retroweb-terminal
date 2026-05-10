@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { TerminalShell } from "@/components/TerminalShell";
 import { useLocalStorageState } from "@/hooks/useLocalStorageState";
-import { useCompactMobile, matchesCompactMobile } from "@/hooks/useCompactMobile";
+import { useCompactMobile } from "@/hooks/useCompactMobile";
 import { UrlCommandInput } from "@/components/UrlCommandInput";
 import { LoadingSequence } from "@/components/LoadingSequence";
 import { TerminalOutput } from "@/components/TerminalOutput";
@@ -67,12 +67,16 @@ function Index() {
   const [status, setStatus] = useState("READY");
   const [asciiWidth, setAsciiWidth] = useLocalStorageState<number>("w1975.asciiWidth", DEFAULT_CONFIG.asciiWidth);
   const [theme, setTheme] = useLocalStorageState<CrtTheme>("w1975.theme", DEFAULT_CONFIG.theme);
-  const [mobilePresetRoll] = useState<CrtTheme | null>(() =>
-    typeof window !== "undefined" && matchesCompactMobile()
-      ? PRESET_THEMES[Math.floor(Math.random() * PRESET_THEMES.length)]!
-      : null,
-  );
+  /** Random phosphor on compact mobile; must be chosen client-side (SSR leaves null → was always falling back to saved theme e.g. blue). */
+  const [mobilePresetRoll, setMobilePresetRoll] = useState<CrtTheme | null>(null);
   const isCompactMobile = useCompactMobile();
+
+  useLayoutEffect(() => {
+    if (!isCompactMobile) return;
+    setMobilePresetRoll((prev) =>
+      prev ?? PRESET_THEMES[Math.floor(Math.random() * PRESET_THEMES.length)]!,
+    );
+  }, [isCompactMobile]);
   const effectiveTheme = isCompactMobile && mobilePresetRoll ? mobilePresetRoll : theme;
   const [glassEnabled, setGlassEnabled] = useLocalStorageState<boolean>("w1975.glassEnabled", DEFAULT_CONFIG.glassEnabled);
   const [glassIntensity, setGlassIntensity] = useLocalStorageState<number>("w1975.glassIntensity", DEFAULT_CONFIG.glassIntensity);
