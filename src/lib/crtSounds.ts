@@ -65,22 +65,39 @@ function getCtx(): AudioContext | null {
       window.AudioContext ||
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!Ctor) return null;
-    ctx = new Ctor();
+    try {
+      // Safari can throw if AudioContext is constructed outside a user gesture.
+      ctx = new Ctor();
+    } catch {
+      ctx = null;
+      masterGain = null;
+      return null;
+    }
     masterGain = ctx.createGain();
     masterGain.gain.value = LOUDNESS_GAIN[loudness];
     masterGain.connect(ctx.destination);
-    ctx.addEventListener("statechange", () => {
+    const onStateChange = () => {
       if (ctx?.state === "running") markAudioReady();
-    });
+    };
+    // Older Safari has spotty support for AudioContext.addEventListener.
+    if ("addEventListener" in ctx) {
+      ctx.addEventListener("statechange", onStateChange);
+    } else {
+      (ctx as unknown as { onstatechange: null | (() => void) }).onstatechange = onStateChange;
+    }
   }
   if (ctx.state === "running") {
     markAudioReady();
     return ctx;
   }
   if (ctx.state === "suspended") {
-    void ctx.resume().then(() => {
-      if (ctx?.state === "running") markAudioReady();
-    });
+    try {
+      void ctx.resume().then(() => {
+        if (ctx?.state === "running") markAudioReady();
+      });
+    } catch {
+      // Ignore; Safari can require a stricter "user gesture" for resume.
+    }
   }
   return null;
 }
@@ -91,15 +108,24 @@ function getCtx(): AudioContext | null {
 // so the context is resumed on the very first user gesture otherwise.
 export function initAudioContext() {
   if (typeof window === "undefined") return;
+  // Don't rely on eager construction/resume (Safari may reject it). Instead,
+  // keep gesture listeners until the context is truly "running".
   getCtx();
   if (audioReady) return;
-  const resume = () => {
+
+  const tryUnlock = () => {
     getCtx();
-    window.removeEventListener("pointerdown", resume);
-    window.removeEventListener("keydown", resume);
+    if (audioReady) {
+      window.removeEventListener("pointerdown", tryUnlock);
+      window.removeEventListener("keydown", tryUnlock);
+      window.removeEventListener("touchstart", tryUnlock);
+    }
   };
-  window.addEventListener("pointerdown", resume, { once: true });
-  window.addEventListener("keydown", resume, { once: true });
+
+  window.addEventListener("pointerdown", tryUnlock);
+  window.addEventListener("keydown", tryUnlock);
+  // iOS Safari sometimes fires touchstart without pointerdown.
+  window.addEventListener("touchstart", tryUnlock, { passive: true });
 }
 
 export function setSoundFlags(next: Partial<SoundFlags>) {
